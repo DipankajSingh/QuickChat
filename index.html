@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <script defer type="module" src="./client/index.js"></script> -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Lets Talk</title>
+</head>
+
+<body class="grid place-items-center h-screen w-screen  bg-gradient-to-t from-slate-900 to-slate-950 text-white">
+    <main class="absolute top-0 text-center m-10 ">
+        <h1 class="font-serif mb-3 font-bold text-4xl ">QuickChat</h1>
+        <p class="max-w-[25rem] font-mono text-lg">Create your very secure key and start chatting, without any number or
+            email
+            verification!
+        </p>
+    </main>
+    <div class="flex p-14 m-3 bg-slate-800 shadow-lg shadow-slate-950 flex-col">
+        <h1 class="font-mono text-lg font-semibold">Your Secret Key</h1>
+        <div class="flex">
+            <input
+                class=" bg-slate-100 active:bg-white focus:bg-white hover:bg-white outline-none h-12 w-full text-slate-800 text-center"
+                placeholder="very_secret_key" type="text">
+            <button id="loginEnterButton" class="outline-none hover:bg-slate-700 px-5 bg-slate-600">Enter</button>
+        </div>
+        <span class="mt-2
+        "><span class="font-bold">Tip:</span> Keep Your Key Long And Uniqe</span>
+    </div>
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io({
+            autoConnect: false
+        });
+
+        const button = document.getElementById('loginEnterButton')
+
+        console.log(button)
+
+        button.addEventListener('click', (event) => {
+            socket.connect({ id: 'hello' });
+        });
+    </script>
+</body>
+
+</html>
