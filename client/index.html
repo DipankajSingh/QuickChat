@@ -20,31 +20,26 @@
     </main>
     <div class="flex p-14 m-3 bg-slate-800 shadow-lg shadow-slate-950 flex-col">
         <h1 class="font-mono text-lg font-semibold">Your Secret Key</h1>
-        <div class="flex">
+        <form action="chat.html" target="_parent" class="flex">
             <input
                 class=" bg-slate-100 active:bg-white focus:bg-white hover:bg-white outline-none h-12 w-full text-slate-800 text-center"
                 placeholder="very_secret_key" type="text">
-            <button id="loginEnterButton" class="outline-none hover:bg-slate-700 px-5 bg-slate-600">Enter</button>
-        </div>
+            <button type="submit" id="loginEnterButton"
+                class="outline-none hover:bg-slate-700 px-5 bg-slate-600">Enter</button>
+        </form>
         <span class="mt-2
         "><span class="font-bold">Tip:</span> Keep Your Key Long And Uniqe</span>
     </div>
 
+    <div class="absolute bottom-4">
+        <h2>How It Works?</h2>
+        <p>--> Choose you room key and press Enter: <span>Ex: "secret_key"</span></p>
+        <p>--> Now share your secret key with someone you want to chat: <span>Ex: "secret_key"</span></p>
+        <p>--> Now when he/she enter your secret key, they automaticaly join your room</p>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-        const socket = io({
-            autoConnect: false
-        });
+    </div>
 
-        const button = document.getElementById('loginEnterButton')
 
-        console.log(button)
-
-        button.addEventListener('click', (event) => {
-            socket.connect({ id: 'hello' });
-        });
-    </script>
 </body>
 
 </html>

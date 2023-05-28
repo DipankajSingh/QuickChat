@@ -5,9 +5,11 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 
+app.use(express.static('client'))
+
 
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
+    res.sendFile(express.static,);
 });
 
 io.on('connection', (socket) => {
@@ -15,6 +17,7 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         console.log('user disconnected');
     });
+
     socket.on('chat message', (msg) => {
         console.log(msg)
         io.to()

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>user</title>
+
+    <style>
+        .left,
+        .right {
+            border-radius: .8rem;
+        }
+
+        .left {
+            border-bottom-left-radius: unset;
+            border-bottom-right-radius: .6rem;
+        }
+
+        .right {
+            border-bottom-right-radius: unset;
+            border-bottom-left-radius: .6rem;
+        }
+    </style>
+</head>
+
+<body class="h-screen w-screen overflow-hidden  bg-gradient-to-t from-slate-900 to-slate-950 text-white">
+    <nav class="h-12 ">
+        <button>exit room</button>
+        <button>download chat</button>
+    </nav>
+    <main class=" [&>p]:px-5 [&>p]:py-2 [&>p]:my-2  overflow-scroll max-h-[90%] relative flex flex-col mx-4 my-6">
+        <p data-sender="left" class="left data-[sender=left]:self-start bg-slate-700 self-start px-3 max-w-sm ">this
+            is a
+            very long message</p>
+        <p data-receiver="right" class="right data-[reciever=right]:self-end bg-slate-700 self-end px-3 max-w-sm">Lorem
+            ipsum
+            dolor sit amet consectetur adipisicing elit. Eum, laborum? Nam eveniet quibusdam, ipsum corrupti accusantium
+            aut.</p>
+
+    </main>
+    <div class="flex absolute w-full bottom-0">
+        <input
+            class=" bg-slate-100 active:bg-white focus:bg-white hover:bg-white outline-none h-12 w-full text-slate-800 text-center"
+            placeholder="very_secret_key" type="text">
+        <button id="send" class="outline-none hover:bg-slate-700 px-5 bg-slate-600">Enter</button>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io({
+            autoConnect: false
+        });
+
+        const button = document.getElementById('send')
+
+        console.log(button)
+
+        button.addEventListener('click', (event) => {
+            socket.connect({ id: 'hello' });
+        });
+    </script>
+</body>
+
+</html>
