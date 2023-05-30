@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <title>user</title>
+
+    <style>
+        .left,
+        .right {
+            border-radius: .8rem;
+        }
+
+        .left {
+            border-bottom-left-radius: unset;
+            border-bottom-right-radius: .6rem;
+        }
+
+        .right {
+            border-bottom-right-radius: unset;
+            border-bottom-left-radius: .6rem;
+        }
+    </style>
+</head>
+
+<body class=" h-screen w-screen overflow-hidden  bg-gradient-to-t from-slate-900 to-slate-950 text-white">
+    <div class="px-3 pt-2 flex flex-col [&>p]:px-4 [&>p]:py-2 [&>p]:bg-slate-700">
+        <p class=" left self-start">this is a message</p>
+        <p class=" right self-end">this one is also a message</p>
+    </div>
+    <div class="flex w-full absolute bottom-0 ">
+        <input id="keyInputElm"
+            class=" bg-slate-100 active:bg-white focus:bg-white hover:bg-white outline-none h-12 w-full text-slate-800 text-center"
+            placeholder="very_secret_key" type="text">
+        <button id="loginEnterButton" class="outline-none hover:bg-slate-700 px-5 bg-slate-600">Enter</button>
+    </div>
+
+</body>
+
+</html>

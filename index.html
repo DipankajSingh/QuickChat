@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <script defer type="module" src="./client/index.js"></script> -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Lets Talk</title>
+    <style>
+        .left,
+        .right {
+            border-radius: .8rem;
+        }
+
+        .left {
+            border-bottom-left-radius: unset;
+            border-bottom-right-radius: .6rem;
+        }
+
+        .right {
+            border-bottom-right-radius: unset;
+            border-bottom-left-radius: .6rem;
+        }
+    </style>
+</head>
+
+<body class="h-screen w-screen bg-gradient-to-t from-slate-900 to-slate-950 text-white">
+    <div id="login" class=" login grid place-items-center h-screen w-screen ">
+        <main class="absolute top-0 text-center m-10 ">
+            <h1 class="font-serif mb-3 font-bold text-4xl ">QuickChat</h1>
+            <p class="max-w-[25rem] font-mono text-lg">Create your very secure key and start chatting, without any
+                number or
+                email
+                verification!
+            </p>
+        </main>
+        <div class="flex p-14 m-3 bg-slate-800 shadow-lg shadow-slate-950 flex-col">
+            <h1 class="font-mono text-lg font-semibold">Your Secret Key</h1>
+            <div class="flex">
+                <input id="keyInputElm"
+                    class=" bg-slate-100 active:bg-white focus:bg-white hover:bg-white outline-none h-12 w-full text-slate-800 text-center"
+                    placeholder="very_secret_key" type="text">
+                <button id="loginEnterButton" class="outline-none hover:bg-slate-700 px-5 bg-slate-600">Enter</button>
+            </div>
+            <span class="mt-2"><span class="font-bold">Tip:</span> Keep Your Key Long And Uniqe</span>
+        </div>
+
+        <div class="absolute bottom-4">
+            <h2>How It Works?</h2>
+            <p>--> Choose you room key and press Enter: <span>Ex: "secret_key"</span></p>
+            <p>--> Now share your secret key with someone you want to chat: <span>Ex: "secret_key"</span></p>
+            <p>--> Now when he/she enter your secret key, they automaticaly join your room</p>
+
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        function $(selector = 'body') {
+            const e = document.querySelectorAll(selector)
+            if (e.length == 1) return e[0]
+            if (e.length > 1) return e
+        }
+
+        function giveElement(tagName = 'div', classList = '', appendElm = '') {
+            const elm = document.createElement(tagName)
+            if (classList != '') elm.classList = classList
+            if (appendElm != '') elm.innerHTML = appendElm
+            return elm
+        }
+
+        let secret_key = undefined
+
+        const chatContainer = giveElement('div', 'px-3 pt-2 flex flex-col [&>p]:px-4 [&>p]:py-2 [&>p]:bg-slate-700')
+        const messgaeContainer = giveElement('div', 'px-3 pt-2 flex flex-col [&>p]:px-4 [&>p]:py-2 [&>p]:bg-slate-700')
+        const senderMessage = giveElement('p', 'left self-start')
+        senderMessage.innerText = "helloo"
+        const userMessage = giveElement('p', 'right self-end')
+        userMessage.innerText = "helloooooo"
+
+
+
+        messgaeContainer.append(senderMessage, userMessage)
+
+        const sendMessageBox = `<div class="flex w-full absolute bottom-0 ">
+        <input id="chatMessage"
+            class=" bg-slate-100 active:bg-white focus:bg-white hover:bg-white outline-none h-12 w-full text-slate-800 text-center"
+            placeholder="type your message" type="text">
+        <button id="sendbutton" class="outline-none hover:bg-slate-700 px-5 bg-slate-600">Send</button>
+    </div>`
+        chatContainer.append(messgaeContainer)
+
+
+
+        console.log($('#loginEnterButton'))
+        const socket = io({
+            autoConnect: false
+        });
+
+        document.getElementById('loginEnterButton').addEventListener('click', () => {
+            socket.connect();
+        })
+
+        socket.on('connect', () => {
+            console.log(`Connected to server with ID: ${socket.id}`);
+
+            const room = document.getElementById('keyInputElm').value;
+            secret_key = room
+            socket.emit('joinRoom', room);
+            // removing login
+            document.getElementById('login').remove()
+            document.body.append(chatContainer)
+            document.body.insertAdjacentHTML('beforeend', sendMessageBox)
+
+            try {
+                $('#sendButton').addEventListener('click', () => {
+                    const messageData = {
+                        room: secret_key,
+                        message: document.getElementById('chatMessage').value
+                    };
+                    socket.emit('chatMessage', messageData);
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        });
+
+        socket.on('chatMessage', (message) => {
+            console.log(`Received message: ${message}`);
+            messgaeContainer.append(senderMessage.innerText = message)
+        });
+
+
+
+
+
+    </script>
+</body>
+
+</html>

@@ -5,25 +5,33 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 
-app.use(express.static('client'))
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
 
+app.use(require('cors')())
 
 app.get('/', (req, res) => {
-    res.sendFile(express.static,);
+    res.sendFile(__dirname + '/index.html');
 });
 
+
 io.on('connection', (socket) => {
-    console.log('a user connected', socket.id);
-    socket.on('disconnect', () => {
-        console.log('user disconnected');
+    // Join a room
+    socket.on('joinRoom', (room) => {
+        socket.join(room);
+        console.log(`Client ${socket.id} joined room ${room}`);
     });
 
-    socket.on('chat message', (msg) => {
-        console.log(msg)
-        io.to()
-        io.except(...socket.rooms).emit('chat message', msg)
-        console.log(typeof [...socket.rooms][0])
-    })
+    // Handle chat message
+    socket.on('chatMessage', (data) => {
+        // Broadcast the message to all clients in the same room
+        io.to(data.room).emit('chatMessage', data.message);
+    });
+
+    // Handle disconnection
+    socket.on('disconnect', () => {
+        console.log(`Client ${socket.id} disconnected`);
+    });
 });
 
 
