@@ -32,8 +32,8 @@
 </head>
 
 <body class="h-screen w-screen bg-gradient-to-t from-slate-900 to-slate-950 text-white">
-    <div id="login" class=" login grid place-items-center h-screen w-screen ">
-        <main class="absolute top-0 text-center m-10 ">
+    <div id="login" class=" login flex flex-col items-center h-screen w-screen ">
+        <main class=" top-0 text-center m-10 ">
             <h1 class="font-serif mb-3 font-bold text-4xl ">QuickChat</h1>
             <p class="max-w-[25rem] font-mono text-lg">Create your very secure key and start chatting, without any
                 number or
@@ -41,7 +41,7 @@
                 verification!
             </p>
         </main>
-        <div class="flex p-14 m-3 bg-slate-800 shadow-lg shadow-slate-950 flex-col">
+        <div class="flex max-w-[25rem] rounded p-14 bg-slate-800 shadow-lg shadow-slate-950 flex-col">
             <h1 class="font-mono text-lg font-semibold">Your Secret Key</h1>
             <div class="flex">
                 <input id="keyInputElm"
@@ -52,11 +52,14 @@
             <span class="mt-2"><span class="font-bold">Tip:</span> Keep Your Key Long And Uniqe</span>
         </div>
 
-        <div class="absolute bottom-4">
-            <h2>How It Works?</h2>
-            <p>--> Choose you room key and press Enter: <span>Ex: "secret_key"</span></p>
-            <p>--> Now share your secret key with someone you want to chat: <span>Ex: "secret_key"</span></p>
-            <p>--> Now when he/she enter your secret key, they automaticaly join your room</p>
+        <div
+            class="[&>p]:relative [&>p:before]:left-[-2.5rem] [&>p:before]:top-[-.7rem] [&>p:before]:content-['\2192'] [&>p:before]:text-lime-400 [&>p:before]:absolute [&>p:before]:text-4xl relative inline-block top-9 mx-12">
+            <h2 class="text-xl font-semibold font-serif">How It Works?</h2>
+            <p class=""> Choose you room key and press Enter: <span>Ex:
+                    "secret_key"</span>
+            </p>
+            <p> Now share your secret key with someone you want to chat with: <span>Ex: "secret_key"</span></p>
+            <p> Now when he/she enter your secret key, they automaticaly join your room</p>
 
         </div>
     </div>
@@ -88,20 +91,10 @@
 
         const messgaeContainer = giveElement('div', 'messgaeContainer gap-3 px-3 mx-3 pt-2 flex flex-col [&>p]:px-4 [&>p]:py-2 [&>p]:bg-slate-700')
 
-        const senderMessage = giveElement('p', 'left mx-3 self-start')
-
-        senderMessage.innerText = "helloo"
-
-        const userMessage = giveElement('p', 'mx-3 right self-end')
-
-        userMessage.innerText = "helloooooo"
-
-        messgaeContainer.append(senderMessage, userMessage)
-
         // this box is container for input send message
-        const sendMessageBox = giveElement('div', 'flex w-full absolute bottom-0')
+        const sendMessageBox = giveElement('div', 'flex w-full fixed bottom-0')
 
-        const inputElm = giveElement('input', 'bg-slate-100 active:bg-white focus:bg-white hover:bg-white outline-none h-12 w-full text-slate-800 text-center')
+        const inputElm = giveElement('textarea', 'text-center py-3 px-1 bg-slate-100 active:bg-white focus:bg-white hover:bg-white outline-none h-14 w-full text-slate-800 text-center')
 
         inputElm.placeholder = "Type Your Message"
 
@@ -125,6 +118,7 @@
             console.log(`Connected to server with ID: ${socket.id}`);
 
             const room = document.getElementById('keyInputElm').value;
+            if (!room) return
             secret_key = room
             socket.emit('joinRoom', room);
             // removing login
@@ -135,22 +129,28 @@
             document.body.append(sendMessageBox)
 
             // console.log(sendMessageButton)
+            function handleMessage() {
+
+                const messageData = {
+                    room: secret_key,
+                    message: inputElm.value
+                };
+                socket.emit('chatMessage', messageData);
+
+                const messageElm = giveElement('p', 'relative right mx-3 self-end')
+                messageElm.innerText = messageData.message
+
+                messgaeContainer.append(messageElm)
+                inputElm.value = ""
+                inputElm.focus()
+            }
             try {
-                sendMessageButton.addEventListener('click', () => {
-                    const messageData = {
-                        room: secret_key,
-                        message: inputElm.value
-                    };
-                    socket.emit('chatMessage', messageData);
-
-                    const messageElm = giveElement('p', 'relative right mx-3 self-end')
-                    messageElm.innerText = messageData.message
-
-                    messgaeContainer.append(messageElm)
-                })
+                sendMessageButton.addEventListener('click', handleMessage)
             } catch (error) {
                 console.log(error)
             }
+            alert("We Aren't Saving Your Chats Right Now!")
+            inputElm.focus()
         });
 
         socket.on('chatMessage', (message) => {
