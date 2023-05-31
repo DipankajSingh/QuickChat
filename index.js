@@ -25,7 +25,7 @@ io.on('connection', (socket) => {
     // Handle chat message
     socket.on('chatMessage', (data) => {
         // Broadcast the message to all clients in the same room
-        io.to(data.room).emit('chatMessage', data.message);
+        io.to(data.room).except(socket.id).emit('chatMessage', data.message);
     });
 
     // Handle disconnection

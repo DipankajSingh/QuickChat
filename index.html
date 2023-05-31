@@ -23,6 +23,11 @@
             border-bottom-right-radius: unset;
             border-bottom-left-radius: .6rem;
         }
+
+        .messgaeContainer {
+            height: 80%;
+            overflow-y: auto;
+        }
     </style>
 </head>
 
@@ -65,38 +70,52 @@
 
         function giveElement(tagName = 'div', classList = '', appendElm = '') {
             const elm = document.createElement(tagName)
-            if (classList != '') elm.classList = classList
+            classList = classList.split(" ")
+            if (classList != '') elm.classList.add(...classList)
             if (appendElm != '') elm.innerHTML = appendElm
             return elm
         }
 
+        const socket = io({
+            autoConnect: false
+        });
+
         let secret_key = undefined
 
+        // have to change class string to array
+
         const chatContainer = giveElement('div', 'px-3 pt-2 flex flex-col [&>p]:px-4 [&>p]:py-2 [&>p]:bg-slate-700')
-        const messgaeContainer = giveElement('div', 'px-3 pt-2 flex flex-col [&>p]:px-4 [&>p]:py-2 [&>p]:bg-slate-700')
-        const senderMessage = giveElement('p', 'left self-start')
+
+        const messgaeContainer = giveElement('div', 'messgaeContainer gap-3 px-3 mx-3 pt-2 flex flex-col [&>p]:px-4 [&>p]:py-2 [&>p]:bg-slate-700')
+
+        const senderMessage = giveElement('p', 'left mx-3 self-start')
+
         senderMessage.innerText = "helloo"
-        const userMessage = giveElement('p', 'right self-end')
+
+        const userMessage = giveElement('p', 'mx-3 right self-end')
+
         userMessage.innerText = "helloooooo"
-
-
 
         messgaeContainer.append(senderMessage, userMessage)
 
-        const sendMessageBox = `<div class="flex w-full absolute bottom-0 ">
-        <input id="chatMessage"
-            class=" bg-slate-100 active:bg-white focus:bg-white hover:bg-white outline-none h-12 w-full text-slate-800 text-center"
-            placeholder="type your message" type="text">
-        <button id="sendbutton" class="outline-none hover:bg-slate-700 px-5 bg-slate-600">Send</button>
-    </div>`
+        // this box is container for input send message
+        const sendMessageBox = giveElement('div', 'flex w-full absolute bottom-0')
+
+        const inputElm = giveElement('input', 'bg-slate-100 active:bg-white focus:bg-white hover:bg-white outline-none h-12 w-full text-slate-800 text-center')
+
+        inputElm.placeholder = "Type Your Message"
+
+        const sendMessageButton = giveElement('button', 'outline-none hover:bg-slate-700 px-5 bg-slate-600')
+
+        sendMessageButton.innerText = "Send"
+
+        sendMessageBox.append(inputElm, sendMessageButton)
+
         chatContainer.append(messgaeContainer)
 
 
 
-        console.log($('#loginEnterButton'))
-        const socket = io({
-            autoConnect: false
-        });
+
 
         document.getElementById('loginEnterButton').addEventListener('click', () => {
             socket.connect();
@@ -110,16 +129,24 @@
             socket.emit('joinRoom', room);
             // removing login
             document.getElementById('login').remove()
-            document.body.append(chatContainer)
-            document.body.insertAdjacentHTML('beforeend', sendMessageBox)
 
+            document.body.append(chatContainer, sendMessageBox)
+
+            document.body.append(sendMessageBox)
+
+            // console.log(sendMessageButton)
             try {
-                $('#sendButton').addEventListener('click', () => {
+                sendMessageButton.addEventListener('click', () => {
                     const messageData = {
                         room: secret_key,
-                        message: document.getElementById('chatMessage').value
+                        message: inputElm.value
                     };
                     socket.emit('chatMessage', messageData);
+
+                    const messageElm = giveElement('p', 'relative right mx-3 self-end')
+                    messageElm.innerText = messageData.message
+
+                    messgaeContainer.append(messageElm)
                 })
             } catch (error) {
                 console.log(error)
@@ -128,7 +155,10 @@
 
         socket.on('chatMessage', (message) => {
             console.log(`Received message: ${message}`);
-            messgaeContainer.append(senderMessage.innerText = message)
+            const messageElm = giveElement('p', 'relative left mx-3 self-start')
+            messageElm.innerText = message
+
+            messgaeContainer.append(messageElm)
         });
 
 
