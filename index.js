@@ -13,7 +13,6 @@ const mongoClient = new MongoClient("mongodb+srv://dipankajg1:motu_patalu@quickc
 async function getMessages(room) {
     // sapreting room and user name 
     const roomName = room.split(" ")[0]
-    const userName = room.split(" ")[1]
 
     await mongoClient.connect();
     const db = mongoClient.db('quickchat');
@@ -67,8 +66,6 @@ io.on('connection', (socket) => {
         socket.join(roomName);
 
         const recentMessages = await getMessages(room)
-        console.log(recentMessages)
-        console.log(`Client ${userName} joined ${roomName}`);
 
         io.to(roomName).emit('fetchRecentChats', recentMessages)
 
@@ -79,7 +76,6 @@ io.on('connection', (socket) => {
         // Broadcast the message to all clients in the same room
         io.to(data.room).except(socket.id).emit('chatMessage', data.message);
         await pushMessage(data.message, data.userName, data.room)
-        console.log(data.message, data.userName, data.room)
     });
 
     // Handle disconnection
@@ -90,5 +86,5 @@ io.on('connection', (socket) => {
 
 
 server.listen(3000, () => {
-    console.log('listening on *:3000');
+    console.log('listening started on port 3000');
 });
