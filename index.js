@@ -59,7 +59,7 @@ app.get('/', (req, res) => {
 io.on('connection', (socket) => {
 
     // Join a room
-    socket.on('joinRoom', async (room = "room dipankaj") => {
+    socket.on('joinRoom', async (room) => {
         // create room if not exists already
         const roomName = room.split(" ")[0]
         const userName = room.split(" ")[1]
@@ -75,7 +75,7 @@ io.on('connection', (socket) => {
     socket.on('chatMessage', async (data) => {
         // Broadcast the message to all clients in the same room
         console.log(data.room.split(' ')[0], data.message)
-        io.to(data.room.split(' ')[0]).except(socket.id).emit('chatMessage', data.message);
+        io.to(data.room.split(' ')[0].toLowerCase()).except(socket.id).emit('chatMessage', data.message);
         await pushMessage(data.message, data.userName, data.room)
     });
 

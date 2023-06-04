@@ -27,11 +27,12 @@
         .messgaeContainer {
             height: max-content;
             padding-bottom: 4rem;
+            margin-top: 4rem;
         }
     </style>
 </head>
 
-<body class="h-screen w-screen bg-slate-950 text-white">
+<body class="h-screen relative w-screen bg-slate-950 text-white">
     <div id="login" class=" login flex flex-col items-center h-screen w-screen ">
         <main class=" top-0 text-center m-10">
             <h1 class="font-serif mb-3 font-bold text-4xl ">QuickChat</h1>
@@ -88,6 +89,16 @@
 
 
 
+        // navbar section
+        const nav = giveElement('nav', "w-screen fixed top-0 z-50 bg-slate-400 shadow-lg flex items-center justify-between p-2")
+        const logoutButton = giveElement('button', "px-4 rounded-xl py-2 bg-slate-600")
+        logoutButton.innerText = "Logout"
+        const roomNameElm = giveElement("span", "")
+        const userNameElm = giveElement("span", "")
+
+        nav.append(logoutButton, roomNameElm, userNameElm)
+
+
         // have to change class string to array
         const chatContainer = giveElement('div', 'chatContainer px-3 pt-2 flex flex-col [&>p]:px-4 [&>p]:py-2')
         const messgaeContainer = giveElement('div', 'messgaeContainer gap-3 px-3 mx-3 pt-2 inline-flex relative flex-col [&>p]:px-4 [&>p]:py-2 [&>p]:bg-slate-700')
@@ -104,6 +115,11 @@
         const chat = giveElement('div', 'flex h-screen w-screen flex-col')
         chat.appendChild(chatContainer, sendMessageBox)
 
+        // this event listener will remove cookie from storage by setting its expiration date to past
+        logoutButton.addEventListener('click', () => {
+            delete_cookie("current_user_name")
+            window.location.reload()
+        })
 
 
         // connecting to server
@@ -123,15 +139,15 @@
 
             // dont change this secret key var else everything crash
             secret_key = room.toLowerCase()
+            roomNameElm.innerText = `🏠: ${secret_key.split(' ')[0]}`
             socket.emit('joinRoom', room.toLowerCase()); 6
 
             // setting this tab user name
             thisUser = room.split(' ')[1]
-
+            userNameElm.innerText = `👤: ${thisUser}`
             // removing login and appending chat page
             document.getElementById('login').remove()
-            document.body.append(chat)
-            document.body.append(sendMessageBox)
+            document.body.append(nav, chat, sendMessageBox)
 
             // set an event listener to send message button to handle message sending
             try {
@@ -157,7 +173,11 @@
             messageElm.innerText = messageData.message
             messgaeContainer.append(messageElm)
             messgaeContainer.scrollTop = messgaeContainer.scrollHeight;
-            messgaeContainer.scroll()
+            messgaeContainer.scrollIntoView({
+                block: 'end',
+                behavior: 'smooth',
+                inline: 'start'
+            })
 
             inputElm.value = ""
             inputElm.focus()
@@ -169,7 +189,11 @@
             const messageElm = giveElement('p', 'relative left mx-3 self-start')
             messageElm.innerText = message
             messgaeContainer.append(messageElm)
-            messgaeContainer.scroll()
+            messgaeContainer.scrollIntoView({
+                block: 'end',
+                behavior: 'smooth',
+                inline: 'start'
+            })
         });
 
         // displaying all the recent chats
@@ -253,7 +277,10 @@
                     setCookie("username", user, 365);
                 }
             }
-        } 
+        }
+        function delete_cookie(name) {
+            document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        }
     </script>
 </body>
 
