@@ -101,7 +101,7 @@
 
         // have to change class string to array
         const chatContainer = giveElement('div', 'chatContainer px-3 pt-2 flex flex-col [&>p]:px-4 [&>p]:py-2')
-        const messgaeContainer = giveElement('div', 'messgaeContainer gap-3 px-3 mx-3 pt-2 inline-flex relative flex-col [&>p]:px-4 [&>p]:py-2 [&>p]:bg-slate-700')
+        const messgaeContainer = giveElement('div', 'messgaeContainer gap-3 px-3 pt-2 inline-flex relative flex-col [&>p]:px-4 [&>p]:py-2 [&>p]:bg-slate-700')
         // this box is container for input send message
         const sendMessageBox = giveElement('div', 'sendMessageBox flex w-full fixed bottom-0')
         const inputElm = giveElement('textarea', 'inputElm text-center py-3 px-1 bg-slate-100 active:bg-white focus:bg-white hover:bg-white outline-none h-14 w-full text-slate-800 text-center')
@@ -118,7 +118,10 @@
         // this event listener will remove cookie from storage by setting its expiration date to past
         logoutButton.addEventListener('click', () => {
             delete_cookie("current_user_name")
-            window.location.reload()
+            while (document.body.hasChildNodes()) {
+                document.body.removeChild(document.body.firstChild)
+            }
+            window.location.reload(true)
         })
 
 
