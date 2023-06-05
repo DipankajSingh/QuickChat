@@ -36,9 +36,7 @@
 
         * {
             -ms-overflow-style: none;
-            /* IE and Edge */
             scrollbar-width: none;
-            /* Firefox */
         }
     </style>
 </head>
@@ -66,7 +64,6 @@
             </div>
             <span class="mt-2"><span class="font-bold">Tip:</span> Keep Your Room Name Long And Unique!</span>
         </div>
-
         <div
             class="[&>p]:relative [&>p:before]:left-[-2.5rem] [&>p>span]:rounded [&>p>span]:bg-green-900 [&>p:before]:top-[-.7rem] [&>p:before]:content-['\2192'] [&>p:before]:text-lime-400 [&>p:before]:absolute [&>p:before]:text-4xl relative inline-block top-9 mx-12">
             <h2 class="text-xl font-semibold font-serif">Usage Instruction: </h2>
@@ -75,7 +72,6 @@
             </p>
             <p> Now share your secret room key <span>(friends_for_ever)</span> with someone you want to chat with</p>
             <p> Now when he/she enter your room key <span>friends_for_ever</span>, they automaticaly join your room</p>
-
         </div>
     </div>
     <script src="/socket.io/socket.io.js"></script>
@@ -86,7 +82,6 @@
         const socket = io({
             autoConnect: false
         });
-
         // utility function
         function $(selector = 'body') {
             const e = document.querySelectorAll(selector)
@@ -100,19 +95,13 @@
             if (appendElm != '') elm.innerHTML = appendElm
             return elm
         }
-
-
-
         // navbar section
         const nav = giveElement('nav', "w-screen fixed top-0 z-50 bg-slate-400 shadow-lg flex items-center justify-between p-2")
         const logoutButton = giveElement('button', "px-4 rounded-xl py-2 bg-slate-600")
         logoutButton.innerText = "Logout"
         const roomNameElm = giveElement("span", "")
         const userNameElm = giveElement("span", "")
-
         nav.append(logoutButton, roomNameElm, userNameElm)
-
-
         // have to change class string to array
         const chatContainer = giveElement('div', 'chatContainer px-3 pt-2 flex flex-col [&>p]:px-4 [&>p]:py-2')
         const messgaeContainer = giveElement('div', 'messgaeContainer gap-3 pt-2 inline-flex relative flex-col [&>p]:px-4 [&>p]:py-2 [&>p]:pt-4 [&>p]:bg-slate-700 [&>p]:min-w-[6rem]')
@@ -124,11 +113,9 @@
         sendMessageButton.innerText = "Send"
         sendMessageBox.append(inputElm, sendMessageButton)
         chatContainer.append(messgaeContainer)
-
         // the main chat container
         const chat = giveElement('div', 'flex h-screen w-screen flex-col')
         chat.appendChild(chatContainer, sendMessageBox)
-
         // this event listener will remove cookie from storage by setting its expiration date to past
         logoutButton.addEventListener('click', () => {
             delete_cookie("current_user_name")
@@ -137,55 +124,43 @@
             }
             window.location.reload(true)
         })
-
-
         // connecting to server
         socket.on('connect', () => {
-            console.log('connect event occured')
             let room = document.getElementById('keyInputElm').value;
-
             if (getCookie('current_user_name') != "") {
                 room = getCookie('current_user_name')
                 secret_key = getCookie('current_user_name')
             }
-
             // check if cookie not stored, if not set it
             if (getCookie('current_user_name') == '') {
                 setCookie('current_user_name', document.getElementById('keyInputElm').value.toLowerCase(), 400)
             }
-
             // dont change this secret key var else everything crash
             secret_key = room.toLowerCase()
             roomNameElm.innerText = `🏠: ${secret_key.split(' ')[0]}`
             socket.emit('joinRoom', room.toLowerCase()); 6
-
             // setting this tab user name
             thisUser = room.split(' ')[1]
             userNameElm.innerText = `👤: ${thisUser}`
             // removing login and appending chat page
             document.getElementById('login').remove()
             document.body.append(nav, chat, sendMessageBox)
-
             // set an event listener to send message button to handle message sending
             try {
                 sendMessageButton.addEventListener('click', handleMessage)
             } catch (error) {
                 console.log(error, 'this error was occured on send button')
             }
-
             // set initially set focus to input box
             inputElm.focus()
         });
-
         // handle message send event
         function handleMessage() {
-            console.log("handleMessage function invoked!")
             const messageData = {
                 room: secret_key.toLowerCase(),
                 userName: thisUser.toLowerCase(),
                 message: inputElm.value
             };
-
             socket.emit('chatMessage', messageData);
             const messageElm = giveElement('p', 'relative right mx-3 self-end')
             messageElm.innerText = messageData.message
@@ -196,14 +171,11 @@
                 behavior: 'smooth',
                 inline: 'start'
             })
-
             inputElm.value = ""
             inputElm.focus()
         }
-
         // handle message recieve event 
         socket.on('chatMessage', (data) => {
-            console.log(`Received message: ${data.message}`);
             const messageElm = giveElement('p', `before:text-xs before:capitalize before:text-lime-400 before:content-["${data.userName}"] relative before:bottom-[1.8rem] before:absolute relative left mx-3 self-start`)
             messageElm.innerText = data.message
             messgaeContainer.append(messageElm)
@@ -213,7 +185,6 @@
                 inline: 'start'
             })
         });
-
         // displaying all the recent chats
         socket.on('fetchRecentChats', (arrayOfChats) => {
             // place message to right if userName and thisUser in current iteration are same
@@ -229,16 +200,13 @@
                     messageElm.innerText = array.message
                     messgaeContainer.append(messageElm)
                 }
-
                 messgaeContainer.scrollIntoView({
                     block: 'end',
                     behavior: 'smooth',
                     inline: 'start'
                 })
-
             }
         })
-
         // checks if already logged in [with checking cookies]
         if (getCookie('current_user_name') == "") {
             document.getElementById('loginEnterButton').addEventListener('click', () => {
@@ -246,20 +214,14 @@
                 // return if input has no value inside and atleast one space in it
                 if (inputValue != '' & hasWhiteSpace(inputValue)) {
                     socket.connect()
-                    console.log("connected to socket!")
                     return
                 }
-                console.log("please enter credencials correctly")
             })
-
-            console.log('fired because no cookie were found')
         }
         // connect to socketIO if cookie exists
         if (getCookie('current_user_name') != "") {
-            console.log('fired because cookie were found')
             socket.connect();
         }
-
         // again some utility functions 
         function setCookie(cname, cvalue, exdays) {
             const d = new Date();
@@ -284,7 +246,6 @@
             }
             return "";
         }
-
         function checkCookie() {
             let user = getCookie("username");
             if (user != "") {
