@@ -73,8 +73,8 @@ io.on('connection', (socket) => {
 
     // Handle chat message
     socket.on('chatMessage', async (data) => {
+        console.log('chatMessage event occured!')
         // Broadcast the message to all clients in the same room
-        console.log(data.room.split(' ')[0], data.message)
         io.to(data.room.split(' ')[0].toLowerCase()).except(socket.id).emit('chatMessage', data);
         await pushMessage(data.message, data.userName, data.room)
     });

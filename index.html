@@ -29,6 +29,17 @@
             padding-bottom: 4rem;
             margin-top: 4rem;
         }
+
+        *::-webkit-scrollbar {
+            display: none;
+        }
+
+        * {
+            -ms-overflow-style: none;
+            /* IE and Edge */
+            scrollbar-width: none;
+            /* Firefox */
+        }
     </style>
 </head>
 
@@ -157,7 +168,7 @@
 
             // set an event listener to send message button to handle message sending
             try {
-                if (inputElm.value != '') { console.log('hi'); sendMessageButton.addEventListener('click', handleMessage) }
+                sendMessageButton.addEventListener('click', handleMessage)
             } catch (error) {
                 console.log(error, 'this error was occured on send button')
             }
@@ -168,6 +179,7 @@
 
         // handle message send event
         function handleMessage() {
+            console.log("handleMessage function invoked!")
             const messageData = {
                 room: secret_key.toLowerCase(),
                 userName: thisUser.toLowerCase(),
@@ -191,9 +203,9 @@
 
         // handle message recieve event 
         socket.on('chatMessage', (data) => {
-            console.log(`Received message: ${message}`);
-            const messageElm = giveElement('p', `before:text-xs before:capitalize before:text-lime-400 before:content-["${data.message}"] relative before:bottom-[1.8rem] before:absolute relative left mx-3 self-start`)
-            messageElm.innerText = message
+            console.log(`Received message: ${data.message}`);
+            const messageElm = giveElement('p', `before:text-xs before:capitalize before:text-lime-400 before:content-["${data.userName}"] relative before:bottom-[1.8rem] before:absolute relative left mx-3 self-start`)
+            messageElm.innerText = data.message
             messgaeContainer.append(messageElm)
             messgaeContainer.scrollIntoView({
                 block: 'end',
