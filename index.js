@@ -5,8 +5,16 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 const { MongoClient } = require('mongodb');
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(require('cors')())
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/index.html');
+});
+
 // connecting to mongoDb
 const mongoClient = new MongoClient("mongodb+srv://dipankajg1:motu_patalu@quickchat.stzv5i8.mongodb.net/?retryWrites=true&w=majority");
+
 // function to get recent messages
 async function getMessages(room) {
     // sapreting room and user name 
@@ -18,8 +26,9 @@ async function getMessages(room) {
     const recentMessages = await userChats.findOneAndUpdate({ "roomKey": roomName }, { $setOnInsert: { "roomKey": roomName, "chats": [] } }, { upsert: true })
     return recentMessages.value.chats
 }
-async function pushMessage(message, userName, roomKey) {
-    const messageFrame = { userName, message }
+
+async function pushMessage(message, userName, roomKey, messageId) {
+    const messageFrame = { userName, message, messageId }
     roomKey = roomKey.split(' ')[0]
     await mongoClient.connect();
     const db = mongoClient.db('quickchat');
@@ -30,12 +39,8 @@ async function pushMessage(message, userName, roomKey) {
     }, { upsert: true })
     return returnVal
 }
-const bodyParser = require('body-parser');
-app.use(bodyParser.json());
-app.use(require('cors')())
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
-});
+
+
 io.on('connection', (socket) => {
     // Join a room
     socket.on('joinRoom', async (room) => {
@@ -50,7 +55,7 @@ io.on('connection', (socket) => {
     socket.on('chatMessage', async (data) => {
         // Broadcast the message to all clients in the same room
         io.to(data.room.split(' ')[0].toLowerCase()).except(socket.id).emit('chatMessage', data);
-        await pushMessage(data.message, data.userName, data.room)
+        await pushMessage(data.message, data.userName, data.room, data.messageId)
     });
 });
 server.listen(3000, () => {

@@ -5,10 +5,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <script defer type="module" src="./client/index.js"></script> -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>Lets Talk</title>
+    <title>QuickChat - quick chat let you chat quickly</title>
     <style>
+        .deleteMessage {
+            background-color: rgb(222, 34, 34) !important;
+        }
+
         .left,
         .right {
             border-radius: .8rem;
@@ -41,7 +44,35 @@
     </style>
 </head>
 
+
+
 <body class="h-screen relative w-screen bg-slate-950 text-white">
+
+    <div id="deleteModal" class="scale-0 absolute antialiased bg-gray-200 text-gray-900 font-sans overflow-x-hidden">
+        <div class="relative px-4 min-h-screen md:flex md:items-center md:justify-center">
+            <div class="bg-black opacity-25 w-full h-full absolute z-10 inset-0"></div>
+            <div
+                class="bg-white rounded-lg md:max-w-md md:mx-auto p-4 fixed inset-x-0 bottom-0 z-50 mb-4 mx-4 md:relative">
+                <div class="md:flex items-center">
+                    <div class="mt-4 md:mt-0 md:ml-6 text-center md:text-left">
+                        <p class="font-bold">Delete Message</p>
+                        <p class="text-sm text-gray-700 mt-1">You will lose all of your selected by clicking "Delete
+                            Message". This
+                            action cannot be undone.
+                        </p>
+                    </div>
+                </div>
+                <div class="text-center md:text-right mt-4 md:flex md:justify-end">
+                    <button id="deleteMessageBtn"
+                        class="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-red-200 text-red-700 rounded-lg font-semibold text-sm md:ml-2 md:order-2">Delete
+                        Message</button>
+                    <button id="deleteCancelBtn" class="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-gray-200 rounded-lg font-semibold text-sm mt-4
+                md:mt-0 md:order-1">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="login" class=" login flex flex-col items-center h-screen w-screen ">
         <main class=" top-0 text-center m-10">
             <h1 class="font-serif mb-3 font-bold text-4xl ">QuickChat</h1>
@@ -52,10 +83,10 @@
             </p>
         </main>
         <div class="flex max-w-[25rem] mx-3 rounded p-8 bg-slate-800 shadow-lg shadow-slate-950 flex-col">
-            <h1 class="font-mono text-lg font-semibold">
+            <h2 class="font-mono text-lg font-semibold">
                 Type Room
                 Name And Your
-                Name</h1>
+                Name</h2>
             <div class="flex">
                 <input id="keyInputElm"
                     class=" bg-slate-100 active:bg-white focus:bg-white hover:bg-white outline-none h-12 w-full text-slate-800 text-center"
@@ -66,7 +97,7 @@
         </div>
         <div
             class="[&>p]:relative [&>p:before]:left-[-2.5rem] [&>p>span]:rounded [&>p>span]:bg-green-900 [&>p:before]:top-[-.7rem] [&>p:before]:content-['\2192'] [&>p:before]:text-lime-400 [&>p:before]:absolute [&>p:before]:text-4xl relative inline-block top-9 mx-12">
-            <h2 class="text-xl font-semibold font-serif">Usage Instruction: </h2>
+            <h3 class="text-xl font-semibold font-serif">Usage Instruction: </h3>
             <p class="">Type Your room name and your name saperated by whitespace " ", like this: <span>Ex:
                     "friends_for_ever Dipankaj"</span>
             </p>
@@ -82,6 +113,9 @@
         const socket = io({
             autoConnect: false
         });
+
+        const deleteFlagged = new Set()
+
         // utility function
         function $(selector = 'body') {
             const e = document.querySelectorAll(selector)
@@ -101,7 +135,18 @@
         logoutButton.innerText = "Logout"
         const roomNameElm = giveElement("span", "")
         const userNameElm = giveElement("span", "")
-        nav.append(logoutButton, roomNameElm, userNameElm)
+
+        const deleteBtn = giveElement('button', "px-3 transition-all scale-0 rounded-xl py-1 bg-red-600")
+
+        deleteBtn.innerHTML = "🗑"
+        // toggleing modal state
+        deleteBtn.addEventListener('click', () => {
+            $("#deleteModal").classList.toggle("scale-0")
+        })
+
+        nav.append(logoutButton, roomNameElm, deleteBtn, userNameElm)
+
+
         // have to change class string to array
         const chatContainer = giveElement('div', 'chatContainer px-3 pt-2 flex flex-col [&>p]:px-4 [&>p]:py-2')
         const messgaeContainer = giveElement('div', 'messgaeContainer gap-3 pt-2 inline-flex relative flex-col [&>p]:px-4 [&>p]:py-2 [&>p]:pt-4 [&>p]:bg-slate-700 [&>p]:min-w-[6rem]')
@@ -116,6 +161,23 @@
         // the main chat container
         const chat = giveElement('div', 'flex h-screen w-screen flex-col')
         chat.appendChild(chatContainer, sendMessageBox)
+
+
+
+        //setting up delete facility 
+
+        $('#deleteMessageBtn').addEventListener('click', () => {
+
+            for (const elm of deleteFlagged) {
+                $(`#${elm}`).remove()
+            }
+            $('#deleteModal').classList.toggle('scale-0')
+        })
+
+        $('#deleteCancelBtn').addEventListener('click', () => {
+            $('#deleteModal').classList.toggle('scale-0')
+        })
+
         // this event listener will remove cookie from storage by setting its expiration date to past
         logoutButton.addEventListener('click', () => {
             delete_cookie("current_user_name")
@@ -197,6 +259,12 @@
                 }
                 if (array.userName != thisUser) {
                     const messageElm = giveElement('p', `before:text-xs before:capitalize before:text-lime-400 before:content-["${array.userName}"] relative before:bottom-[1.8rem] before:absolute relative left mx-3 self-start`)
+
+                    //this is temporary
+                    messageElm.id = `id${randomId() + i}`
+                    // Setting message id to delete it
+                    handleLongPress(messageElm)
+
                     messageElm.innerText = array.message
                     messgaeContainer.append(messageElm)
                 }
@@ -207,6 +275,43 @@
                 })
             }
         })
+
+
+        // handle the delete functionality
+        function handleLongPress(htmlElm) {
+
+            let timer = undefined
+
+            htmlElm.addEventListener('mousedown', (e) => {
+                timer = setTimeout(() => {
+                    let classList = [...htmlElm.classList]
+                    // setting for delete message
+                    if (!classList.includes('deleteMessage')) {
+                        htmlElm.classList.add('deleteMessage')
+                        deleteFlagged.add(htmlElm.id)
+                        console.log(deleteFlagged)
+                    }
+                    if (classList.includes('deleteMessage')) {
+                        htmlElm.classList.remove('deleteMessage')
+                        deleteFlagged.delete(htmlElm.id)
+                    }
+                    // showing delete button only if there's anything to delete
+                    if (deleteFlagged.size !== 0) {
+                        deleteBtn.classList.remove('scale-0')
+                    }
+
+                    console.log("mousedown fired")
+
+
+                    // socket.emit("deleteMessage", messageDetails)
+                }, 1500)
+            })
+            htmlElm.addEventListener('mouseup', () => {
+                clearTimeout(timer)
+                console.log("mouseup fired")
+            })
+        }
+
         // checks if already logged in [with checking cookies]
         if (getCookie('current_user_name') == "") {
             document.getElementById('loginEnterButton').addEventListener('click', () => {
@@ -260,6 +365,12 @@
         function delete_cookie(name) {
             document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
         }
+
+        function randomId() {
+            let currentDate = new Date()
+            return currentDate.getTime()
+        }
+
     </script>
 </body>
 
