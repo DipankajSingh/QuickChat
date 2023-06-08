@@ -129,16 +129,17 @@
             if (appendElm != '') elm.innerHTML = appendElm
             return elm
         }
-        // navbar section
+        // element creation section
         const nav = giveElement('nav', "w-screen fixed top-0 z-50 bg-slate-400 shadow-lg flex items-center justify-between p-2")
         const logoutButton = giveElement('button', "px-4 rounded-xl py-2 bg-slate-600")
-        logoutButton.innerText = "Logout"
+        logoutButton.innerText = "Exit"
         const roomNameElm = giveElement("span", "")
         const userNameElm = giveElement("span", "")
 
-        const deleteBtn = giveElement('button', "px-3 transition-all scale-0 rounded-xl py-1 bg-red-600")
+        const deleteBtn = giveElement('button', "transition-all scale-0 p-2 rounded-full bg-slate-950")
 
         deleteBtn.innerHTML = "🗑"
+
         // toggleing modal state
         deleteBtn.addEventListener('click', () => {
             $("#deleteModal").classList.toggle("scale-0")
@@ -149,7 +150,7 @@
 
         // have to change class string to array
         const chatContainer = giveElement('div', 'chatContainer px-3 pt-2 flex flex-col [&>p]:px-4 [&>p]:py-2')
-        const messgaeContainer = giveElement('div', 'messgaeContainer gap-3 pt-2 inline-flex relative flex-col [&>p]:px-4 [&>p]:py-2 [&>p]:pt-4 [&>p]:bg-slate-700 [&>p]:min-w-[6rem]')
+        const messgaeContainer = giveElement('div', 'messgaeContainer gap-3 pt-2 inline-flex relative flex-col [&>p]:px-4 [&>p]:py-2 [&>p]:pt-1 [&>p]:bg-slate-800 [&>p.left]:bg-slate-600 [&>p]:min-w-[6rem]')
         // this box is container for input send message
         const sendMessageBox = giveElement('div', 'sendMessageBox flex w-full fixed bottom-0')
         const inputElm = giveElement('textarea', 'inputElm text-center py-3 px-1 bg-slate-100 active:bg-white focus:bg-white hover:bg-white outline-none h-14 w-full text-slate-800 text-center')
@@ -162,14 +163,13 @@
         const chat = giveElement('div', 'flex h-screen w-screen flex-col')
         chat.appendChild(chatContainer, sendMessageBox)
 
-
-
         //setting up delete facility 
 
         $('#deleteMessageBtn').addEventListener('click', () => {
 
             for (const elm of deleteFlagged) {
                 $(`#${elm}`).remove()
+                deleteFlagged.delete(elm.id)
             }
             $('#deleteModal').classList.toggle('scale-0')
         })
@@ -203,7 +203,7 @@
             socket.emit('joinRoom', room.toLowerCase()); 6
             // setting this tab user name
             thisUser = room.split(' ')[1]
-            userNameElm.innerText = `👤: ${thisUser}`
+            userNameElm.innerText = `👤: ${capitalize(thisUser)}`
             // removing login and appending chat page
             document.getElementById('login').remove()
             document.body.append(nav, chat, sendMessageBox)
@@ -221,12 +221,21 @@
             const messageData = {
                 room: secret_key.toLowerCase(),
                 userName: thisUser.toLowerCase(),
-                message: inputElm.value
+                message: inputElm.value,
+                time: Date.now()
             };
+
+            //sending message to server
             socket.emit('chatMessage', messageData);
-            const messageElm = giveElement('p', 'relative right mx-3 self-end')
-            messageElm.innerText = messageData.message
+            const messageElm = giveElement('p', 'relative flex flex-col right mx-3 self-end')
+            const timeElm = giveElement('span', "self-end text-xs")
+            const messageTxt = giveElement("span")
+            timeElm.innerText = getCurrentTime(messageData.time)
+            messageTxt.innerText = messageData.message
+            messageElm.append(messageTxt, timeElm)
+            // appending to main message container
             messgaeContainer.append(messageElm)
+
             messgaeContainer.scrollTop = messgaeContainer.scrollHeight;
             messgaeContainer.scrollIntoView({
                 block: 'end',
@@ -253,19 +262,36 @@
             for (let i = 0; i < arrayOfChats.length; i++) {
                 let array = arrayOfChats[i];
                 if (array.userName == thisUser) {
-                    const messageElm = giveElement('p', 'relative right mx-3 self-end')
-                    messageElm.innerText = array.message
+                    const messageElm = giveElement('p', 'relative flex flex-col right mx-3 self-end')
+                    const timeElm = giveElement('span', "self-end text-xs")
+                    timeElm.innerText = getCurrentTime(arrayOfChats?.time)
+                    console.log(arrayOfChats?.time)
+
+                    const messageTxt = giveElement("span")
+                    timeElm.innerText = getCurrentTime(array.time)
+                    messageTxt.innerText = array.message
+                    messageElm.append(messageTxt, timeElm)
                     messgaeContainer.append(messageElm)
                 }
                 if (array.userName != thisUser) {
-                    const messageElm = giveElement('p', `before:text-xs before:capitalize before:text-lime-400 before:content-["${array.userName}"] relative before:bottom-[1.8rem] before:absolute relative left mx-3 self-start`)
+                    const messageElm = giveElement('p', `relative flex flex-col relative left mx-1 self-start`)
+
+                    const timeElm = giveElement('span', "self-end text-xs")
+                    timeElm.innerText = getCurrentTime(arrayOfChats?.time)
+                    console.log(arrayOfChats?.time)
+                    const nameElm = giveElement('span', "text-xs capitalize self-start text-xs text-lime-400")
+                    nameElm.innerText = array.userName
+
+                    const messageTxt = giveElement("span")
+                    messageTxt.innerText = array.message
+
+                    messageElm.append(nameElm, messageTxt, timeElm)
 
                     //this is temporary
                     messageElm.id = `id${randomId() + i}`
                     // Setting message id to delete it
                     handleLongPress(messageElm)
-
-                    messageElm.innerText = array.message
+                    // appending to main message Container
                     messgaeContainer.append(messageElm)
                 }
                 messgaeContainer.scrollIntoView({
@@ -282,7 +308,7 @@
 
             let timer = undefined
 
-            htmlElm.addEventListener('mousedown', (e) => {
+            function handleDown() {
                 timer = setTimeout(() => {
                     let classList = [...htmlElm.classList]
                     // setting for delete message
@@ -299,17 +325,22 @@
                     if (deleteFlagged.size !== 0) {
                         deleteBtn.classList.remove('scale-0')
                     }
-
+                    if (deleteFlagged.size === 0) {
+                        deleteBtn.classList.add('scale-0')
+                    }
                     console.log("mousedown fired")
-
-
                     // socket.emit("deleteMessage", messageDetails)
                 }, 1500)
-            })
-            htmlElm.addEventListener('mouseup', () => {
+            }
+            function handleUp() {
                 clearTimeout(timer)
+                deleteFlagged.delete(htmlElm.id)
                 console.log("mouseup fired")
-            })
+            }
+            htmlElm.addEventListener('mousedown', handleDown)
+            htmlElm.addEventListener('mouseup', handleUp)
+            htmlElm.addEventListener('touchstart', handleDown)
+            htmlElm.addEventListener('touchend', handleUp)
         }
 
         // checks if already logged in [with checking cookies]
@@ -369,6 +400,18 @@
         function randomId() {
             let currentDate = new Date()
             return currentDate.getTime()
+        }
+
+        function capitalize(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        function getCurrentTime(date = new Date()) {
+            let now = new Date(date);
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            let timeString = hours.toString().padStart(2, "0") + ":" + minutes.toString().padStart(2, "0");
+            return timeString;
         }
 
     </script>

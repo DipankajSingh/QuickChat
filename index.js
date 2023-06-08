@@ -27,8 +27,9 @@ async function getMessages(room) {
     return recentMessages.value.chats
 }
 
-async function pushMessage(message, userName, roomKey, messageId) {
-    const messageFrame = { userName, message, messageId }
+async function pushMessage(message, userName, roomKey, messageId, time) {
+    const messageFrame = { userName, message, messageId, time: time }
+
     roomKey = roomKey.split(' ')[0]
     await mongoClient.connect();
     const db = mongoClient.db('quickchat');
@@ -50,12 +51,13 @@ io.on('connection', (socket) => {
         socket.join(roomName);
         const recentMessages = await getMessages(room)
         io.to(roomName).emit('fetchRecentChats', recentMessages)
+        // console.log(recentMessages.chats.time)
     });
     // Handle chat message
     socket.on('chatMessage', async (data) => {
         // Broadcast the message to all clients in the same room
         io.to(data.room.split(' ')[0].toLowerCase()).except(socket.id).emit('chatMessage', data);
-        await pushMessage(data.message, data.userName, data.room, data.messageId)
+        await pushMessage(data.message, data.userName, data.room, data.messageId, data.time)
     });
 });
 server.listen(3000, () => {
