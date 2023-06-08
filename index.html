@@ -247,8 +247,15 @@
         }
         // handle message recieve event 
         socket.on('chatMessage', (data) => {
-            const messageElm = giveElement('p', `before:text-xs before:capitalize before:text-lime-400 before:content-["${data.userName}"] relative before:bottom-[1.8rem] before:absolute relative left mx-3 self-start`)
-            messageElm.innerText = data.message
+            const messageElm = giveElement('p', 'relative flex flex-col left mx-3 self-start')
+            const timeElm = giveElement('span', "self-end text-xs")
+            timeElm.innerText = getCurrentTime(data?.time)
+
+            const messageTxt = giveElement("span")
+            messageTxt.innerText = data.message
+            const nameElm = giveElement('span', "text-xs capitalize self-start text-xs text-lime-400")
+            nameElm.innerText = data.userName
+            messageElm.append(nameElm, messageTxt, timeElm)
             messgaeContainer.append(messageElm)
             messgaeContainer.scrollIntoView({
                 block: 'end',
@@ -259,16 +266,16 @@
         // displaying all the recent chats
         socket.on('fetchRecentChats', (arrayOfChats) => {
             // place message to right if userName and thisUser in current iteration are same
+
             for (let i = 0; i < arrayOfChats.length; i++) {
                 let array = arrayOfChats[i];
                 if (array.userName == thisUser) {
                     const messageElm = giveElement('p', 'relative flex flex-col right mx-3 self-end')
                     const timeElm = giveElement('span', "self-end text-xs")
-                    timeElm.innerText = getCurrentTime(arrayOfChats?.time)
-                    console.log(arrayOfChats?.time)
+                    timeElm.innerText = getCurrentTime(array?.time)
 
                     const messageTxt = giveElement("span")
-                    timeElm.innerText = getCurrentTime(array.time)
+
                     messageTxt.innerText = array.message
                     messageElm.append(messageTxt, timeElm)
                     messgaeContainer.append(messageElm)
@@ -277,8 +284,7 @@
                     const messageElm = giveElement('p', `relative flex flex-col relative left mx-1 self-start`)
 
                     const timeElm = giveElement('span', "self-end text-xs")
-                    timeElm.innerText = getCurrentTime(arrayOfChats?.time)
-                    console.log(arrayOfChats?.time)
+                    timeElm.innerText = getCurrentTime(array?.time)
                     const nameElm = giveElement('span', "text-xs capitalize self-start text-xs text-lime-400")
                     nameElm.innerText = array.userName
 
