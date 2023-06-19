@@ -76,10 +76,7 @@
     <div id="login" class=" login flex flex-col items-center h-screen w-screen ">
         <main class=" top-0 text-center m-10">
             <h1 class="font-serif mb-3 font-bold text-4xl ">QuickChat</h1>
-            <p class="max-w-[25rem] font-mono text-lg">Create your very secure key and start chatting, without any
-                number or
-                email
-                verification!
+            <p class="max-w-[25rem] font-mono text-lg">Create your room key and start chatting, without verification!
             </p>
         </main>
         <div class="flex max-w-[25rem] mx-3 rounded p-8 bg-slate-800 shadow-lg shadow-slate-950 flex-col">
@@ -133,7 +130,6 @@
         const nav = giveElement('nav', "w-screen fixed top-0 z-50 bg-slate-400 shadow-lg flex items-center justify-between p-2")
         const logoutButton = giveElement('button', "px-4 rounded-xl py-2 bg-slate-600")
         logoutButton.innerText = "Exit"
-        const roomNameElm = giveElement("span", "")
         const userNameElm = giveElement("span", "")
 
         const deleteBtn = giveElement('button', "transition-all scale-0 p-2 rounded-full bg-slate-950")
@@ -145,7 +141,7 @@
             $("#deleteModal").classList.toggle("scale-0")
         })
 
-        nav.append(logoutButton, roomNameElm, deleteBtn, userNameElm)
+        nav.append(logoutButton, deleteBtn, userNameElm)
 
 
         // have to change class string to array
@@ -199,7 +195,6 @@
             }
             // dont change this secret key var else everything crash
             secret_key = room.toLowerCase()
-            roomNameElm.innerText = `🏠: ${secret_key.split(' ')[0]}`
             socket.emit('joinRoom', room.toLowerCase()); 6
             // setting this tab user name
             thisUser = room.split(' ')[1]
