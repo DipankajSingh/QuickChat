@@ -81,12 +81,12 @@
         </main>
         <div class="flex max-w-[25rem] mx-3 rounded p-8 bg-slate-800 shadow-lg shadow-slate-950 flex-col">
             <h2 class="font-mono text-lg font-semibold">
-                Type Room
+                Enter Room
                 Name And Your
                 Name</h2>
             <div class="flex">
                 <input id="keyInputElm"
-                    class=" bg-slate-100 active:bg-white focus:bg-white hover:bg-white outline-none h-12 w-full text-slate-800 text-center"
+                    class=" bg-slate-100 active:bg-white pl-2 focus:bg-white hover:bg-white outline-none h-12 w-full text-slate-800 "
                     placeholder="RoomName YourName" type="text">
                 <button id="loginEnterButton" class="outline-none hover:bg-slate-700 px-5 bg-slate-600">Enter</button>
             </div>
@@ -149,7 +149,7 @@
         const messgaeContainer = giveElement('div', 'messgaeContainer gap-3 pt-2 inline-flex relative flex-col [&>p]:px-4 [&>p]:py-2 [&>p]:pt-1 [&>p]:bg-slate-800 [&>p.left]:bg-slate-600 [&>p]:min-w-[6rem]')
         // this box is container for input send message
         const sendMessageBox = giveElement('div', 'sendMessageBox flex w-full fixed bottom-0')
-        const inputElm = giveElement('textarea', 'inputElm text-center py-3 px-1 bg-slate-100 active:bg-white focus:bg-white hover:bg-white outline-none h-14 w-full text-slate-800 text-center')
+        const inputElm = giveElement('textarea', 'inputElm py-3 pl-3 px-1 bg-slate-100 active:bg-white focus:bg-white hover:bg-white outline-none h-14 w-full text-slate-800')
         inputElm.placeholder = "Message"
         const sendMessageButton = giveElement('button', 'sendMessageButton outline-none hover:bg-slate-700 px-5 bg-slate-600')
         sendMessageButton.innerText = "Send"
