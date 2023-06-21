@@ -243,7 +243,7 @@
         // handle message recieve event 
         socket.on('chatMessage', (data) => {
             const messageElm = giveElement('p', 'relative flex flex-col left mx-3 self-start')
-            const timeElm = giveElement('span', "self-end text-xs")
+            const timeElm = giveElement('span', "self-end text-grey-400 hu text-xs")
             timeElm.innerText = getCurrentTime(data?.time)
 
             const messageTxt = giveElement("span")
@@ -297,7 +297,7 @@
                 }
                 messgaeContainer.scrollIntoView({
                     block: 'end',
-                    behavior: 'smooth',
+                    behavior: 'instant',
                     inline: 'start'
                 })
             }
