@@ -12,6 +12,15 @@
             background-color: rgb(222, 34, 34) !important;
         }
 
+        .sendMessageButton {
+            display: inline-block;
+            height: 3.5rem;
+            width: 3.5rem;
+            padding: .5rem;
+            border-radius: 1rem;
+            bottom: 0;
+        }
+
         .left,
         .right {
             border-radius: .8rem;
@@ -79,8 +88,8 @@
             <p class="max-w-[25rem] font-mono text-lg">Create your room key and start chatting, without verification!
             </p>
         </main>
-        <div class="flex max-w-[25rem] mx-3 rounded p-8 bg-slate-800 shadow-lg shadow-slate-950 flex-col">
-            <h2 class="font-mono text-lg font-semibold">
+        <div class="flex max-w-[25rem] mx-3  rounded p-8 bg-slate-800 shadow-lg shadow-slate-950 flex-col">
+            <h2 class="font-mono text-sm font-semibold">
                 Enter Room
                 Name And Your
                 Name</h2>
@@ -88,9 +97,9 @@
                 <input id="keyInputElm"
                     class=" bg-slate-100 active:bg-white pl-2 focus:bg-white hover:bg-white outline-none h-12 w-full text-slate-800 "
                     placeholder="RoomName YourName" type="text">
-                <button id="loginEnterButton" class="outline-none hover:bg-slate-700 px-5 bg-slate-600">Enter</button>
+                <button id="loginEnterButton" class=" hover:bg-slate-700 px-5 bg-slate-600">Go!</button>
             </div>
-            <span class="mt-2"><span class="font-bold">Tip:</span> Keep Your Room Name Long And Unique!</span>
+            <span class="mt-2"><span class="font-bold ">Tip:</span> Keep Your Room Name Long And Unique!</span>
         </div>
         <div
             class="[&>p]:relative [&>p:before]:left-[-2.5rem] [&>p>span]:rounded [&>p>span]:bg-green-900 [&>p:before]:top-[-.7rem] [&>p:before]:content-['\2192'] [&>p:before]:text-lime-400 [&>p:before]:absolute [&>p:before]:text-4xl relative inline-block top-9 mx-12">
@@ -127,32 +136,29 @@
             return elm
         }
         // element creation section
-        const nav = giveElement('nav', "w-screen fixed top-0 z-50 bg-slate-400 shadow-lg flex items-center justify-between p-2")
+        const nav = giveElement('nav', "w-screen fixed top-0 z-50 bg-slate-500 shadow-lg flex items-center justify-between p-2")
         const logoutButton = giveElement('button', "px-4 rounded-xl py-2 bg-slate-600")
-        logoutButton.innerText = "Exit"
+        logoutButton.innerText = "👋👋"
         const userNameElm = giveElement("span", "")
 
-        const deleteBtn = giveElement('button', "transition-all scale-0 p-2 rounded-full bg-slate-950")
 
-        deleteBtn.innerHTML = "🗑"
 
-        // toggleing modal state
-        deleteBtn.addEventListener('click', () => {
-            $("#deleteModal").classList.toggle("scale-0")
-        })
-
-        nav.append(logoutButton, deleteBtn, userNameElm)
+        nav.append(logoutButton, userNameElm)
 
 
         // have to change class string to array
         const chatContainer = giveElement('div', 'chatContainer px-3 pt-2 flex flex-col [&>p]:px-4 [&>p]:py-2')
-        const messgaeContainer = giveElement('div', 'messgaeContainer gap-3 pt-2 inline-flex relative flex-col [&>p]:px-4 [&>p]:py-2 [&>p]:pt-1 [&>p]:bg-slate-800 [&>p.left]:bg-slate-600 [&>p]:min-w-[6rem]')
+        const messgaeContainer = giveElement('div', 'messgaeContainer gap-3 pt-4 mb-6 inline-flex relative flex-col [&>p]:px-3 [&>p]:py-2 [&>p]:pt-1 [&>p]:bg-slate-800 [&>p.left]:bg-slate-600 [&>p]:min-w-[6rem]')
         // this box is container for input send message
-        const sendMessageBox = giveElement('div', 'sendMessageBox flex w-full fixed bottom-0')
-        const inputElm = giveElement('textarea', 'inputElm py-3 pl-3 px-1 bg-slate-100 active:bg-white focus:bg-white hover:bg-white outline-none h-14 w-full text-slate-800')
+        const sendMessageBox = giveElement('div', 'sendMessageBox gap-3 justify-center w-full flex m-auto fixed bottom-3')
+        const inputElm = giveElement('textarea', 'rounded-md py-3 pl-3 px-1 bg-slate-100 active:bg-white focus:bg-white hover:bg-white resize-none outline-none h-14 w-[19rem] text-slate-800')
+
         inputElm.placeholder = "Message"
-        const sendMessageButton = giveElement('button', 'sendMessageButton outline-none hover:bg-slate-700 px-5 bg-slate-600')
-        sendMessageButton.innerText = "Send"
+        const sendMessageButton = giveElement('button', 'sendMessageButton outline-bg-slate-400 hover:bg-slate-700 bg-slate-400 transition-all')
+        const icon = giveElement('img', 'h-full w-full')
+        icon.src = "https://www.svgrepo.com/show/506555/send.svg"
+
+        sendMessageButton.append(icon)
         sendMessageBox.append(inputElm, sendMessageButton)
         chatContainer.append(messgaeContainer)
         // the main chat container
@@ -160,19 +166,6 @@
         chat.appendChild(chatContainer, sendMessageBox)
 
         //setting up delete facility 
-
-        $('#deleteMessageBtn').addEventListener('click', () => {
-
-            for (const elm of deleteFlagged) {
-                $(`#${elm}`).remove()
-                deleteFlagged.delete(elm.id)
-            }
-            $('#deleteModal').classList.toggle('scale-0')
-        })
-
-        $('#deleteCancelBtn').addEventListener('click', () => {
-            $('#deleteModal').classList.toggle('scale-0')
-        })
 
         // this event listener will remove cookie from storage by setting its expiration date to past
         logoutButton.addEventListener('click', () => {
@@ -198,7 +191,7 @@
             socket.emit('joinRoom', room.toLowerCase()); 6
             // setting this tab user name
             thisUser = room.split(' ')[1]
-            userNameElm.innerText = `👤: ${capitalize(thisUser)}`
+            userNameElm.innerText = `👤 ${capitalize(thisUser)}`
             // removing login and appending chat page
             document.getElementById('login').remove()
             document.body.append(nav, chat, sendMessageBox)
@@ -211,138 +204,69 @@
             // set initially set focus to input box
             inputElm.focus()
         });
+
+        function scrollTop() {
+            messgaeContainer.scrollIntoView({
+                block: 'end',
+                behavior: 'smooth',
+                inline: 'start'
+            })
+        }
+
+        function createBubble({ position, message, time, senderName }) {
+            const messageElm = giveElement('p', `relative flex flex-col ${position} mx-3 ${position === 'right' ? "self-end" : "self-start"}`)
+            const timeElm = giveElement('span', "self-end text-gray-400 text-xs")
+            const messageTxt = giveElement("span")
+            timeElm.innerText = getCurrentTime(time)
+            messageTxt.innerText = message
+
+            if (senderName) {
+                const nameElm = giveElement('span', "text-xs capitalize self-start text-xs text-lime-400")
+                nameElm.innerText = senderName
+                messageElm.append(nameElm, messageTxt, timeElm)
+            } else {
+                messageElm.append(messageTxt, timeElm)
+            }
+            // appending to main message container
+            messgaeContainer.append(messageElm)
+        }
+
         // handle message send event
         function handleMessage() {
+            if (inputElm.value.trim() == "" || inputElm.value == '') return
             const messageData = {
                 room: secret_key.toLowerCase(),
                 userName: thisUser.toLowerCase(),
                 message: inputElm.value,
                 time: Date.now()
             };
-
             //sending message to server
             socket.emit('chatMessage', messageData);
-            const messageElm = giveElement('p', 'relative flex flex-col right mx-3 self-end')
-            const timeElm = giveElement('span', "self-end text-xs")
-            const messageTxt = giveElement("span")
-            timeElm.innerText = getCurrentTime(messageData.time)
-            messageTxt.innerText = messageData.message
-            messageElm.append(messageTxt, timeElm)
-            // appending to main message container
-            messgaeContainer.append(messageElm)
-
-            messgaeContainer.scrollTop = messgaeContainer.scrollHeight;
-            messgaeContainer.scrollIntoView({
-                block: 'end',
-                behavior: 'smooth',
-                inline: 'start'
-            })
+            createBubble({ position: "right", message: messageData.message, time: messageData.time })
+            scrollTop()
             inputElm.value = ""
             inputElm.focus()
         }
+
         // handle message recieve event 
         socket.on('chatMessage', (data) => {
-            const messageElm = giveElement('p', 'relative flex flex-col left mx-3 self-start')
-            const timeElm = giveElement('span', "self-end text-grey-400 hu text-xs")
-            timeElm.innerText = getCurrentTime(data?.time)
-
-            const messageTxt = giveElement("span")
-            messageTxt.innerText = data.message
-            const nameElm = giveElement('span', "text-xs capitalize self-start text-xs text-lime-400")
-            nameElm.innerText = data.userName
-            messageElm.append(nameElm, messageTxt, timeElm)
-            messgaeContainer.append(messageElm)
-            messgaeContainer.scrollIntoView({
-                block: 'end',
-                behavior: 'smooth',
-                inline: 'start'
-            })
+            createBubble({ position: 'left', message: data?.message, time: data?.time, senderName: data.userName })
+            scrollTop()
         });
+
         // displaying all the recent chats
         socket.on('fetchRecentChats', (arrayOfChats) => {
-            // place message to right if userName and thisUser in current iteration are same
-
             for (let i = 0; i < arrayOfChats.length; i++) {
                 let array = arrayOfChats[i];
                 if (array.userName == thisUser) {
-                    const messageElm = giveElement('p', 'relative flex flex-col right mx-3 self-end')
-                    const timeElm = giveElement('span', "self-end text-xs")
-                    timeElm.innerText = getCurrentTime(array?.time)
-
-                    const messageTxt = giveElement("span")
-
-                    messageTxt.innerText = array.message
-                    messageElm.append(messageTxt, timeElm)
-                    messgaeContainer.append(messageElm)
+                    createBubble({ position: 'right', message: array?.message, time: array?.time })
                 }
                 if (array.userName != thisUser) {
-                    const messageElm = giveElement('p', `relative flex flex-col relative left mx-1 self-start`)
-
-                    const timeElm = giveElement('span', "self-end text-xs")
-                    timeElm.innerText = getCurrentTime(array?.time)
-                    const nameElm = giveElement('span', "text-xs capitalize self-start text-xs text-lime-400")
-                    nameElm.innerText = array.userName
-
-                    const messageTxt = giveElement("span")
-                    messageTxt.innerText = array.message
-
-                    messageElm.append(nameElm, messageTxt, timeElm)
-
-                    //this is temporary
-                    messageElm.id = `id${randomId() + i}`
-                    // Setting message id to delete it
-                    handleLongPress(messageElm)
-                    // appending to main message Container
-                    messgaeContainer.append(messageElm)
+                    createBubble({ position: 'left', message: array?.message, time: array?.time, senderName: array?.userName })
+                    scrollTop()
                 }
-                messgaeContainer.scrollIntoView({
-                    block: 'end',
-                    behavior: 'instant',
-                    inline: 'start'
-                })
             }
         })
-
-
-        // handle the delete functionality
-        function handleLongPress(htmlElm) {
-
-            let timer = undefined
-
-            function handleDown() {
-                timer = setTimeout(() => {
-                    let classList = [...htmlElm.classList]
-                    // setting for delete message
-                    if (!classList.includes('deleteMessage')) {
-                        htmlElm.classList.add('deleteMessage')
-                        deleteFlagged.add(htmlElm.id)
-                        console.log(deleteFlagged)
-                    }
-                    if (classList.includes('deleteMessage')) {
-                        htmlElm.classList.remove('deleteMessage')
-                        deleteFlagged.delete(htmlElm.id)
-                    }
-                    // showing delete button only if there's anything to delete
-                    if (deleteFlagged.size !== 0) {
-                        deleteBtn.classList.remove('scale-0')
-                    }
-                    if (deleteFlagged.size === 0) {
-                        deleteBtn.classList.add('scale-0')
-                    }
-                    console.log("mousedown fired")
-                    // socket.emit("deleteMessage", messageDetails)
-                }, 1500)
-            }
-            function handleUp() {
-                clearTimeout(timer)
-                deleteFlagged.delete(htmlElm.id)
-                console.log("mouseup fired")
-            }
-            htmlElm.addEventListener('mousedown', handleDown)
-            htmlElm.addEventListener('mouseup', handleUp)
-            htmlElm.addEventListener('touchstart', handleDown)
-            htmlElm.addEventListener('touchend', handleUp)
-        }
 
         // checks if already logged in [with checking cookies]
         if (getCookie('current_user_name') == "") {
@@ -355,6 +279,8 @@
                 }
             })
         }
+
+
         // connect to socketIO if cookie exists
         if (getCookie('current_user_name') != "") {
             socket.connect();

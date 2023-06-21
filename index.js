@@ -71,14 +71,13 @@ io.on('connection', (socket) => {
             rooms[roomName].push(socket.id);
         }
         socket.join(roomName);
-        [].push()
         // Retrieve the MongoDB client from the global scope
         const db = mongoClient.db('quickchat');
 
         const recentMessages = await getMessages(room, db);
 
-        io.to(roomName).except(() => { if (rooms[roomName].length !== 0) return rooms[roomName][0] }).emit('fetchRecentChats', recentMessages);
-        console.log(rooms);
+        // Send recent messages only to the user who just connected
+        socket.emit('fetchRecentChats', recentMessages);
     });
 
     socket.on('disconnect', () => {
@@ -87,8 +86,10 @@ io.on('connection', (socket) => {
             if (index !== -1) {
                 rooms[room].splice(index, 1);
             }
+            if (rooms[room].length === 0) {
+                delete rooms[room];
+            }
         });
-        console.log(rooms);
     });
 
     // Handle chat message
