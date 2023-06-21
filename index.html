@@ -150,11 +150,11 @@
         const chatContainer = giveElement('div', 'chatContainer px-3 pt-2 flex flex-col [&>p]:px-4 [&>p]:py-2')
         const messgaeContainer = giveElement('div', 'messgaeContainer gap-3 pt-4 mb-6 inline-flex relative flex-col [&>p]:px-3 [&>p]:py-2 [&>p]:pt-1 [&>p]:bg-slate-800 [&>p.left]:bg-slate-600 [&>p]:min-w-[6rem]')
         // this box is container for input send message
-        const sendMessageBox = giveElement('div', 'sendMessageBox gap-3 justify-center w-full flex m-auto fixed bottom-3')
-        const inputElm = giveElement('textarea', 'rounded-md py-3 pl-3 px-1 bg-slate-100 active:bg-white focus:bg-white hover:bg-white resize-none outline-none h-14 w-[19rem] text-slate-800')
+        const sendMessageBox = giveElement('div', 'sendMessageBox bg-slate-950 gap-3 justify-center w-full flex mx-12 fixed bottom-0')
+        const inputElm = giveElement('textarea', 'rounded-md mb-6 min-w-[15rem] py-3 pl-3 px-1 bg-slate-100 active:bg-white focus:bg-white hover:bg-white resize-none outline-none h-14 text-slate-800')
 
         inputElm.placeholder = "Message"
-        const sendMessageButton = giveElement('button', 'sendMessageButton outline-bg-slate-400 hover:bg-slate-700 bg-slate-400 transition-all')
+        const sendMessageButton = giveElement('button', 'sendMessageButton outline-lime-400 hover:bg-slate-700 bg-lime-600 transition-all')
         const icon = giveElement('img', 'h-full w-full')
         icon.src = "https://www.svgrepo.com/show/506555/send.svg"
 
@@ -221,7 +221,7 @@
             messageTxt.innerText = message
 
             if (senderName) {
-                const nameElm = giveElement('span', "text-xs capitalize self-start text-xs text-lime-400")
+                const nameElm = giveElement('span', "text-xs capitalize self-start text-xs text-gray-300")
                 nameElm.innerText = senderName
                 messageElm.append(nameElm, messageTxt, timeElm)
             } else {
