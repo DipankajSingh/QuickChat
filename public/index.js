@@ -13,13 +13,13 @@ exitIcon.src = 'https://www.svgrepo.com/show/506720/logout.svg'
 logoutButton.append(exitIcon)
 
 const userNameElm = giveElement("span", "mr-4")
-const onlineUsers = giveElement('span', 'text-lime-400 capitalize')
+const onlineUsers = giveElement('span', 'text-white capitalize')
 
 nav.append(logoutButton, onlineUsers, userNameElm)
 
 
 // have to change class string to array
-const messageContainer = giveElement('div', 'messageContainer gap-3 mb-[1rem] flex overflow-auto flex-1 flex-col [&>p]:px-3 [&>p]:py-2 [&>p]:pt-1 [&>p]:bg-slate-800 [&>p.left]:bg-slate-600 [&>p]:min-w-[6rem]')
+const messageContainer = giveElement('div', 'messageContainer gap-3 pt-6 mb-[1rem] flex overflow-auto flex-1 flex-col [&>p]:px-3 [&>p]:py-2 [&>p]:pt-1 [&>p]:bg-slate-800 [&>p.left]:bg-slate-600 [&>p]:min-w-[6rem]')
 
 // this box is container for input send message
 const sendMessageBox = giveElement('div', 'sendMessageBox px-4 mb-2 gap-3 flex justify-center sticky bottom-0')
@@ -90,7 +90,7 @@ function createBubble({ position, message, time, senderName }) {
     messageTxt.innerText = message
 
     if (senderName) {
-        const nameElm = giveElement('span', "text-xs capitalize self-start text-xs text-gray-300")
+        const nameElm = giveElement('span', "text-xs capitalize self-start text-xs text-lime-500")
         nameElm.innerText = senderName
         messageElm.append(nameElm, messageTxt, timeElm)
     } else {
@@ -123,53 +123,10 @@ socket.on('chatMessage', (data) => {
     scrollTop()
 });
 
-// const recentLazyMessages = []; // Your array with 50 elements
-// let startIndex = 0; // Starting index of the elements to be displayed
-// const displayCount = 30; // Number of elements to display at a time
-
-
-// function displayMessages() {
-//     const endIndex = Math.min(startIndex + displayCount, recentLazyMessages.length);
-//     for (let i = startIndex; i < endIndex; i++) {
-//         const message = recentLazyMessages[i];
-//         // Create a new element to display the message (e.g., <p>, <div>, etc.)
-//         const messageElement = document.createElement('p');
-//         messageElement.classList.add('text-lg')
-//         messageElement.textContent = message.message;
-//         messageContainer.appendChild(messageElement);
-//     }
-//     startIndex = endIndex;
-
-//     // Check if there are more messages to display
-//     if (startIndex < recentLazyMessages.length) {
-//         // Register a scroll event listener on the messageContainer
-//         messageContainer.addEventListener('scroll', handleScroll);
-//     }
-// }
-
-// function handleScroll() {
-//     const containerHeight = messageContainer.offsetHeight;
-//     const scrollTop = messageContainer.scrollTop;
-//     const scrollHeight = messageContainer.scrollHeight;
-
-//     // Check if the user has scrolled to the bottom
-//     if (containerHeight + scrollTop >= scrollHeight) {
-//         // Remove the scroll event listener to avoid multiple triggers
-//         messageContainer.removeEventListener('scroll', handleScroll);
-
-//         // Display the next set of messages
-//         displayMessages();
-//     }
-// }
-
-// Initial display of messages
-
-
-// displaying all the recent chats
+socket.on('disconnect', () => {
+    onlineUsers.textContent = "disconnect! reload please"
+})
 socket.on('fetchRecentChats', (arrayOfChats) => {
-    // recentLazyMessages.push(...arrayOfChats)
-    // console.log(recentLazyMessages[0].message)
-    // displayMessages();
 
     for (let i = 0; i < arrayOfChats.length; i++) {
         let array = arrayOfChats[i];
@@ -178,9 +135,10 @@ socket.on('fetchRecentChats', (arrayOfChats) => {
         }
         if (array.userName != thisUser) {
             createBubble({ position: 'left', message: array?.message, time: array?.time, senderName: array?.userName })
-            scrollTop()
         }
     }
+    scrollTop()
+
 })
 // handle online status
 socket.on('userOnline', (userName) => {

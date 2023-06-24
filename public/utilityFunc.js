@@ -60,12 +60,10 @@ export function capitalize(string) {
 
 export function getCurrentTime(date = new Date()) {
     let now = new Date(date);
-    let day = now.getDate().toString().padStart(2, "0");
-    let month = (now.getMonth() + 1).toString().padStart(2, "0");
     let hours = now.getHours();
     let minutes = now.getMinutes();
     let period = hours >= 12 ? "PM" : "AM";
     hours = (hours % 12) || 12;
-    let timeString = day + "-" + month + " " + hours.toString().padStart(2, "0") + ":" + minutes.toString().padStart(2, "0") + " " + period;
+    let timeString = hours.toString().padStart(2, "0") + ":" + minutes.toString().padStart(2, "0") + " " + period;
     return timeString;
 }

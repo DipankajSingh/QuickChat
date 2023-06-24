@@ -97,6 +97,8 @@ io.on('connection', (socket) => {
     });
 
     socket.on('disconnect', () => {
+        console.log(rooms)
+        // console.log(rooms[room] = rooms[room].filter((client) => client.socketId !== socket.id))
         Object.keys(rooms).forEach((room) => {
             rooms[room] = rooms[room].filter((client) => client.socketId !== socket.id);
             if (rooms[room].length === 0) {
