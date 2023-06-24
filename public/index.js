@@ -6,34 +6,32 @@ const socket = io({
     autoConnect: false
 });
 
-const nav = giveElement('nav', "w-screen fixed top-0 h-16 z-50 bg-slate-500 shadow-lg flex items-center justify-between p-2")
-const logoutButton = giveElement('button', "ml-4 rounded-xl h-6 w-8")
+const nav = giveElement('nav', "w-screen fixed top-0 h-12 z-50 bg-slate-400 shadow-lg flex items-center justify-between p-2")
+const logoutButton = giveElement('button', "ml-4 exitIcon rounded-xl h-6 w-8")
 const exitIcon = giveElement('img');
 exitIcon.src = 'https://www.svgrepo.com/show/506720/logout.svg'
 logoutButton.append(exitIcon)
 
-const userNameElm = giveElement("span", "")
-const onlineUsers = giveElement('span', 'text-lime-400')
+const userNameElm = giveElement("span", "mr-4")
+const onlineUsers = giveElement('span', 'text-lime-400 capitalize')
 
 nav.append(logoutButton, onlineUsers, userNameElm)
 
 
 // have to change class string to array
-const messageContainer = giveElement('div', 'messageContainer gap-3 py-2 my-[1.5rem] flex overflow-auto flex-1 flex-col [&>p]:px-3 [&>p]:py-2 [&>p]:pt-1 [&>p]:bg-slate-800 [&>p.left]:bg-slate-600 [&>p]:min-w-[6rem]')
-
+const messageContainer = giveElement('div', 'messageContainer gap-3 pb-4 pt-2 mt-[3rem] flex overflow-auto flex-1 flex-col [&>p]:px-3 [&>p]:py-2 [&>p]:pt-1 [&>p]:bg-slate-800 [&>p.left]:bg-slate-600 [&>p]:min-w-[6rem]')
 
 // this box is container for input send message
-const sendMessageBox = giveElement('div', 'sendMessageBox bg-slate-950 p-2 mb-6 gap-3 flex justify-center sticky bottom-0')
-const inputElm = giveElement('textarea', 'rounded-md pl-3 px-1 bg-slate-100 w-full active:bg-white focus:bg-white hover:bg-white resize-none outline-none h-14 text-slate-800')
+const sendMessageBox = giveElement('div', 'sendMessageBox px-4 mb-2 gap-3 flex justify-center sticky bottom-0')
+const inputElm = giveElement('textarea', 'rounded-md p-2 bg-slate-100 active:outline outline-lime-600 w-full active:bg-white focus:bg-white hover:bg-white resize-none h-14 text-slate-800')
 inputElm.placeholder = "Message"
 
-const sendMessageButton = giveElement('button', 'sendMessageButton outline-lime-400 hover:bg-slate-700 bg-lime-600 transition-all')
+const sendMessageButton = giveElement('button', 'sendMessageButton hover:bg-green-600 active:bg-green-600 focus:bg-green-600 bg-green-500 transition-all')
 const icon = giveElement('img', 'h-full w-full')
 icon.src = "https://www.svgrepo.com/show/506555/send.svg"
 sendMessageButton.append(icon)
 sendMessageBox.append(inputElm, sendMessageButton)
 
-//setting up delete facility 
 
 // this event listener will remove cookie from storage by setting its expiration date to past
 logoutButton.addEventListener('click', () => {
