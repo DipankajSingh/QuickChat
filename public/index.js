@@ -6,7 +6,7 @@ const socket = io({
     autoConnect: false
 });
 
-const nav = giveElement('nav', "w-screen fixed top-0 h-12 z-50 bg-slate-400 shadow-lg flex items-center justify-between p-2")
+const nav = giveElement('nav', "w-screen fixed top-0 z-10 h-12 bg-slate-400 shadow-lg flex items-center justify-between p-2")
 const logoutButton = giveElement('button', "ml-4 exitIcon rounded-xl h-6 w-8")
 const exitIcon = giveElement('img');
 exitIcon.src = 'https://www.svgrepo.com/show/506720/logout.svg'
@@ -19,11 +19,11 @@ nav.append(logoutButton, onlineUsers, userNameElm)
 
 
 // have to change class string to array
-const messageContainer = giveElement('div', 'messageContainer gap-3 pb-4 pt-2 mt-[3rem] flex overflow-auto flex-1 flex-col [&>p]:px-3 [&>p]:py-2 [&>p]:pt-1 [&>p]:bg-slate-800 [&>p.left]:bg-slate-600 [&>p]:min-w-[6rem]')
+const messageContainer = giveElement('div', 'messageContainer gap-3 mb-[1rem] flex overflow-auto flex-1 flex-col [&>p]:px-3 [&>p]:py-2 [&>p]:pt-1 [&>p]:bg-slate-800 [&>p.left]:bg-slate-600 [&>p]:min-w-[6rem]')
 
 // this box is container for input send message
 const sendMessageBox = giveElement('div', 'sendMessageBox px-4 mb-2 gap-3 flex justify-center sticky bottom-0')
-const inputElm = giveElement('textarea', 'rounded-md p-2 bg-slate-100 active:outline outline-lime-600 w-full active:bg-white focus:bg-white hover:bg-white resize-none h-14 text-slate-800')
+const inputElm = giveElement('textarea', 'rounded-md p-2 bg-slate-100 active:outline outline-lime-600 w-full active:bg-white focus:bg-white hover:bg-white resize-none h-12 text-slate-800')
 inputElm.placeholder = "Message"
 
 const sendMessageButton = giveElement('button', 'sendMessageButton hover:bg-green-600 active:bg-green-600 focus:bg-green-600 bg-green-500 transition-all')
@@ -71,12 +71,15 @@ socket.on('connect', () => {
     } catch (error) {
         console.log(error, 'this error was occured on send button')
     }
-    // set initially set focus to input box
-    inputElm.focus()
 });
 
 function scrollTop() {
-    messageContainer.scrollTop = messageContainer.scrollHeight
+    // messageContainer.scrollIntoView()
+    // messageContainer.scrollTop = (messageContainer.scrollHeight)
+    messageContainer.scrollTo({
+        top: messageContainer.scrollHeight,
+        behavior: "instant",
+    });
 }
 
 function createBubble({ position, message, time, senderName }) {
