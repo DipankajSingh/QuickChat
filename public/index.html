@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    <script defer type="module" src="index.js"></script>
+    <title>Quickly - Quickly let you chat quickly</title>
+</head>
+
+
+
+<body class="h-screen relative w-screen flex flex-col m-0 bg-slate-950 text-white">
+    <div id="login" class=" login flex flex-col items-center h-screen w-screen ">
+        <main class=" top-0 text-center m-10">
+            <h1 class="font-serif mb-3 font-bold text-4xl ">QuickChat</h1>
+            <p class="max-w-[25rem] font-mono text-lg">Create your room key and start chatting, without verification!
+            </p>
+        </main>
+        <div class="flex max-w-[25rem] mx-3  rounded p-8 bg-slate-800 shadow-lg shadow-slate-950 flex-col">
+            <h2 class="font-mono text-sm font-semibold">
+                Enter Room
+                Name And Your
+                Name</h2>
+            <div class="flex">
+                <input id="keyInputElm"
+                    class=" bg-slate-100 active:bg-white pl-2 focus:bg-white hover:bg-white outline-none h-12 w-full text-slate-800 "
+                    placeholder="RoomName YourName" type="text">
+                <button id="loginEnterButton" class=" hover:bg-slate-700 px-5 bg-slate-600">Go!</button>
+            </div>
+            <span class="mt-2"><span class="font-bold ">Tip:</span> Keep Your Room Name Long And Unique!</span>
+        </div>
+        <div
+            class="[&>p]:relative [&>p:before]:left-[-2.5rem] [&>p>span]:rounded [&>p>span]:bg-green-900 [&>p:before]:top-[-.7rem] [&>p:before]:content-['\2192'] [&>p:before]:text-lime-400 [&>p:before]:absolute  [&>p:before]:text-4xl relative inline-block top-9 mx-12">
+            <h3 class="text-xl font-semibold font-serif">Usage Instruction: </h3>
+            <p class="">Type Your room name and your name saperated by whitespace " ", like this: <span>Ex:
+                    "friends_for_ever Dipankaj"</span>
+            </p>
+            <p> Now share your secret room key <span>(friends_for_ever)</span> with someone you want to chat with</p>
+            <p> Now when he/she enter your room key <span>friends_for_ever</span>, they automaticaly join your room</p>
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+
+</body>
+
+</html>

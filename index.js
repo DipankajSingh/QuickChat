@@ -7,14 +7,15 @@ const io = new Server(server);
 const { MongoClient } = require('mongodb');
 const bodyParser = require('body-parser');
 
+app.use(express.static('public'))
+
 app.use(bodyParser.json());
 app.use(require('cors')());
-
 const rooms = {};
 
 // Serve the index.html file
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
+    res.sendFile(__dirname + '/public/index.html');
 });
 
 // Connect to MongoDB
@@ -42,10 +43,15 @@ async function getMessages(room, db) {
     return recentMessages.value ? recentMessages.value.chats : [];
 }
 
+function emitOnlineStatus(room, userName) {
+    socket.to(room).emit('userOnline', userName);
+}
+
+
 // Function to push a new chat message
-async function pushMessage(message, userName, roomKey, messageId, time, db) {
+async function pushMessage(message, userName, roomKey, time, db) {
     try {
-        const messageFrame = { userName, message, messageId, time };
+        const messageFrame = { userName, message, time };
         roomKey = roomKey.split(' ')[0];
         const userChats = db.collection('usersChat');
         const oldMessage = await userChats.findOne({ roomKey: roomKey });
@@ -62,19 +68,29 @@ async function pushMessage(message, userName, roomKey, messageId, time, db) {
 }
 
 io.on('connection', (socket) => {
+    function emitOnlineStatus(room, userName) {
+        socket.to(room).emit('userOnline', userName);
+    }
     // Join a room
     socket.on('joinRoom', async (room) => {
         const roomName = room.split(" ")[0];
+        const userName = room.split(" ")[1];
         if (!rooms.hasOwnProperty(roomName)) {
-            rooms[roomName] = [socket.id]; // Create a new room array if it doesn't exist
+            rooms[roomName] = [{ socketId: socket.id, userName }]; // Create a new room array if it doesn't exist
         } else {
-            rooms[roomName].push(socket.id);
+            rooms[roomName].push({ socketId: socket.id, userName });
         }
         socket.join(roomName);
+
         // Retrieve the MongoDB client from the global scope
         const db = mongoClient.db('quickchat');
 
         const recentMessages = await getMessages(room, db);
+        emitOnlineStatus(roomName, userName)
+
+        // Emit the information of already connected clients to the newly connected client
+        const connectedClients = rooms[roomName].filter(client => client.socketId !== socket.id);
+        socket.emit('existingClients', connectedClients);
 
         // Send recent messages only to the user who just connected
         socket.emit('fetchRecentChats', recentMessages);
@@ -82,10 +98,7 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         Object.keys(rooms).forEach((room) => {
-            const index = rooms[room].indexOf(socket.id);
-            if (index !== -1) {
-                rooms[room].splice(index, 1);
-            }
+            rooms[room] = rooms[room].filter((client) => client.socketId !== socket.id);
             if (rooms[room].length === 0) {
                 delete rooms[room];
             }
@@ -100,7 +113,7 @@ io.on('connection', (socket) => {
         // Retrieve the MongoDB client from the global scope
         const db = mongoClient.db('quickchat');
 
-        await pushMessage(data.message, data.userName, data.room, data.messageId, data.time, db);
+        await pushMessage(data.message, data.userName, data.room, data.time, db);
     });
 });
 
