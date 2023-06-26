@@ -1,3 +1,5 @@
+import { promptDailog } from "./alertModal.js";
+import { key1 } from "./restrictedKeys.js";
 import { setCookie, hasWhiteSpace, getCookie, delete_cookie, capitalize, getCurrentTime, giveElement, $ } from "./utilityFunc.js";
 
 let thisUser = undefined
@@ -7,12 +9,12 @@ const socket = io({
 });
 
 const nav = giveElement('nav', "w-screen fixed top-0 z-10 h-12 bg-slate-400 shadow-lg flex items-center justify-between p-2")
-const logoutButton = giveElement('button', "ml-4 exitIcon rounded-xl h-6 w-8")
+const logoutButton = giveElement('button', "ml-4 mb-2 exitIcon rounded-xl h-6 w-8")
 const exitIcon = giveElement('img');
 exitIcon.src = 'https://www.svgrepo.com/show/506720/logout.svg'
 logoutButton.append(exitIcon)
 
-const userNameElm = giveElement("span", "mr-4")
+const userNameElm = giveElement("span", "mr-4 text-green-900 font-bold")
 const onlineUsers = giveElement('span', 'text-white capitalize')
 
 nav.append(logoutButton, onlineUsers, userNameElm)
@@ -152,13 +154,14 @@ socket.on('userOnline', (userName) => {
 if (getCookie('current_user_name') == "") {
     document.getElementById('loginEnterButton').addEventListener('click', () => {
         let inputValue = document.getElementById('keyInputElm').value;
+        if (inputValue.split(' ')[0] === key1[0]) {
+            promptDailog(key1[1])
+            return
+        }
         // return if input has no value inside and atleast one space in it
-        if (inputValue != '' & hasWhiteSpace(inputValue)) {
+        if (inputValue.value != '' & hasWhiteSpace(inputValue)) {
             socket.connect()
             return
         }
     })
 }
-
-
-

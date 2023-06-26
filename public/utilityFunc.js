@@ -8,7 +8,7 @@ export function giveElement(tagName = 'div', classList = '', appendElm = '') {
     const elm = document.createElement(tagName)
     classList = classList.split(" ")
     if (classList != '') elm.classList.add(...classList)
-    if (appendElm != '') elm.innerHTML = appendElm
+    if (appendElm != '') elm.append(appendElm)
     return elm
 }
 export function setCookie(cname, cvalue, exdays) {

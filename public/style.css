@@ -7,8 +7,27 @@
     bottom: 0;
 }
 
+
+.alertModel {
+    top: 50%;
+    left: 50%;
+    padding: 1rem;
+    padding-top: 3rem;
+    height: max-content;
+    width: calc(100vw - 2rem);
+    transform: translateX(-50%);
+}
+
+.closeBtn {
+    position: absolute;
+    padding: .5rem 1rem;
+    background-color: red;
+    top: .5rem;
+    right: .5rem;
+}
+
 .exitIcon {
-    filter: invert(13%) sepia(95%) saturate(7364%) hue-rotate(100deg) brightness(114%) contrast(118%);
+    filter: invert(13%) sepia(95%) saturate(7364%) hue-rotate(10deg) brightness(114%) contrast(118%);
 }
 
 .left,
