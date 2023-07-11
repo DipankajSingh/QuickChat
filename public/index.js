@@ -153,15 +153,17 @@ socket.on('userOnline', (userName) => {
 // checks if already logged in [with checking cookies]
 if (getCookie('current_user_name') == "") {
     document.getElementById('loginEnterButton').addEventListener('click', () => {
-        let inputValue = document.getElementById('keyInputElm').value;
-        if (inputValue.split(' ')[0] === key1[0]) {
-            promptDailog(key1[1])
-            return
-        }
-        // return if input has no value inside and atleast one space in it
-        if (inputValue.value != '' & hasWhiteSpace(inputValue)) {
-            socket.connect()
-            return
-        }
+        promptDailog("Sorry, Service is stopped!, Please Connect To The developer.")
+        // let inputValue = document.getElementById('keyInputElm').value;
+        // if (inputValue.split(' ')[0] === key1[0]) {
+        //     promptDailog(key1[1])
+        //     return
+        // }
+        // // return if input has no value inside and atleast one space in it
+        // if (inputValue.value != '' & hasWhiteSpace(inputValue)) {
+        //     socket.connect()
+        //     return
+        // }
     })
 }
+
