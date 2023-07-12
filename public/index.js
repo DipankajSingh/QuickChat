@@ -1,8 +1,8 @@
 import { promptDailog } from "./alertModal.js";
-import { key1 } from "./restrictedKeys.js";
 import { setCookie, hasWhiteSpace, getCookie, delete_cookie, capitalize, getCurrentTime, giveElement, $ } from "./utilityFunc.js";
 
 let thisUser = undefined
+let thisRoom = undefined
 let secret_key = undefined
 const socket = io({
     autoConnect: false
@@ -21,7 +21,7 @@ nav.append(logoutButton, onlineUsers, userNameElm)
 
 
 // have to change class string to array
-const messageContainer = giveElement('div', 'messageContainer gap-3 pt-6 mb-[1rem] flex overflow-auto flex-1 flex-col [&>p]:px-3 [&>p]:py-2 [&>p]:pt-1 [&>p]:bg-slate-800 [&>p.left]:bg-slate-600 [&>p]:min-w-[6rem]')
+const messageContainer = giveElement('div', 'messageContainer gap-3 pt-14 mb-[1rem] flex overflow-auto flex-1 flex-col [&>p]:px-3 [&>p]:py-2 [&>p]:pt-1 [&>p]:bg-slate-800 [&>p.left]:bg-slate-600 [&>p]:min-w-[6rem]')
 
 // this box is container for input send message
 const sendMessageBox = giveElement('div', 'sendMessageBox px-4 mb-2 gap-3 flex justify-center sticky bottom-0')
@@ -61,7 +61,8 @@ socket.on('connect', () => {
     // dont change this secret key var else everything crash
     secret_key = room.toLowerCase()
     socket.emit('joinRoom', room.toLowerCase()); 6
-    // setting this tab user name
+    thisRoom = room.split(' ')[0]
+    // setting thisUser name
     thisUser = room.split(' ')[1]
     userNameElm.innerText = `👤 ${capitalize(thisUser)}`
     // removing login and appending chat page
@@ -104,6 +105,10 @@ function createBubble({ position, message, time, senderName }) {
 
 // handle message send event
 function handleMessage() {
+    if (thisUser.toLowerCase()!="dipankaj" && thisRoom.toLowerCase()=="@humdard") {
+        promptDailog("You Are Restricted To Send Messages In This Room!","red")
+        return
+    }
     if (inputElm.value.trim() == "" || inputElm.value == '') return
     const messageData = {
         room: secret_key.toLowerCase(),
@@ -153,17 +158,12 @@ socket.on('userOnline', (userName) => {
 // checks if already logged in [with checking cookies]
 if (getCookie('current_user_name') == "") {
     document.getElementById('loginEnterButton').addEventListener('click', () => {
-        promptDailog("Sorry, Service is stopped!, Please Connect To The developer.")
-        // let inputValue = document.getElementById('keyInputElm').value;
-        // if (inputValue.split(' ')[0] === key1[0]) {
-        //     promptDailog(key1[1])
-        //     return
-        // }
-        // // return if input has no value inside and atleast one space in it
-        // if (inputValue.value != '' & hasWhiteSpace(inputValue)) {
-        //     socket.connect()
-        //     return
-        // }
+        let inputValue = document.getElementById('keyInputElm').value;
+        // return if input has no value inside and atleast one space in it
+        if (inputValue.value != '' & hasWhiteSpace(inputValue)) {
+            socket.connect()
+            return
+        }
     })
 }
 

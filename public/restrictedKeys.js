@@ -1,1 +1,1 @@
-export const key1 = ["need to update", "thank you!"]
+export const key1 = ["", "thank you!"]

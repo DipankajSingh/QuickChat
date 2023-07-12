@@ -16,12 +16,14 @@
     height: max-content;
     width: calc(100vw - 2rem);
     transform: translateX(-50%);
+    z-index: 100;
 }
 
 .closeBtn {
     position: absolute;
     padding: .5rem 1rem;
-    background-color: red;
+    background-color: rgb(128, 38, 3);
+    border: 2px black solid;
     top: .5rem;
     right: .5rem;
 }
