@@ -105,10 +105,6 @@ function createBubble({ position, message, time, senderName }) {
 
 // handle message send event
 function handleMessage() {
-    if (thisUser.toLowerCase()!="dipankaj" && thisRoom.toLowerCase()=="@humdard") {
-        promptDailog("You Are Restricted To Send Messages In This Room!","red")
-        return
-    }
     if (inputElm.value.trim() == "" || inputElm.value == '') return
     const messageData = {
         room: secret_key.toLowerCase(),
