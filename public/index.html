@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<meta name="msvalidate.01" content="079A3B824AAD1DA0144A8486449FFD30" />
+<meta name="description" content="QuickChat - Connect and communicate effortlessly using unique room keys.">
+    <meta name="keywords" content="QuickChat,no verification, without email, dipankaj, singh, dipankaj singh, quick chat, private messaging, private, senorita, chat, communication, room key, chat room, online chat, real-time communication, instant messaging, connect, social, platform">
+    <meta name="author" content="Dipankaj Singh">
+    <meta property="og:title" content="QuickChat - Quickly let you chat quickly">
+    <meta property="og:description" content="Connect and communicate effortlessly using unique room keys.">
+    <meta property="og:image" content="your-image-url.jpg">
+    <meta property="og:url" content="https://dipdev.online">
+    <meta property="og:type" content="website">
+        <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    <script defer type="module" src="index.js"></script>
+    <title>Quickly - Quickly let you chat quickly</title>
+</head>
+
+
+
+<body class="h-screen relative w-screen flex flex-col m-0 bg-slate-900 text-white">
+    <div id="login" class=" login flex flex-col items-center h-screen w-screen ">
+<header>
+        <main class=" top-0 text-center m-10">
+            <h1 class="font-serif mb-3 font-bold text-4xl ">QuickChat</h1>
+            <p class="max-w-[25rem] font-sans text-lg">"Enter the Key, Open the Chat, Connect and Communicate
+                Effortlessly"</p>
+        </main>
+</header>   
+<div class="flex max-w-[25rem] mx-3  rounded p-8 bg-slate-800 shadow-lg shadow-slate-950 flex-col">
+            <h2 class="mb-2">Create your key, <span class="text-yellow-200">use only one space!</span></h2>
+            <div class="flex">
+                <input id="keyInputElm"
+                    class=" bg-slate-100 placeholder:text-gray-700 active:bg-white pl-2 focus:bg-white hover:bg-white outline-none h-12 w-full text-slate-800 "
+                    placeholder="Room@key YourName" type="text">
+                <button id="loginEnterButton" class=" hover:bg-slate-700 px-5 bg-green-600">Go!</button>
+            </div>
+            <span class="mt-2 text-sm capitalize"><span class="font-bold text-green-600">Tip: </span>use special
+                characters to make
+                your key
+                unique and secure! You can use:- <span class="text-center bg-green-700 py-0.5 px-2 rounded-md">@, #, $,
+                    &, *,
+                    ?</span></span>
+
+        </div>
+        <div
+            class="[&>p]:relative [&>p:before]:left-[-2.5rem] [&>p>span]:px-1 [&>p>span]:rounded [&>p>span]:bg-green-900 [&>p:before]:top-[-.7rem] [&>p:before]:content-['\2192'] [&>p:before]:text-lime-400 [&>p:before]:absolute  [&>p:before]:text-4xl relative inline-block top-9 mx-12">
+            <h3 class="text-xl font-semibold font-serif">Usage Instruction: </h3>
+            <p class="">Type Your room name and your name saperated by whitespace " " <span>Ex:
+                    "@forever Dipankaj"</span>
+            </p>
+            <p> Now share your secret room key <span>@forever</span> with whom you want to chat</p>
+            <p>To join an existing room for example this room<span>@forever</span> you need to enter like this
+                <span class="whitespace-nowrap">@forever Senorita</span>
+            </p>
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+
+</body>
+
+</html>
