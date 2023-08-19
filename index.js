@@ -5,7 +5,7 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server,{
     cors:{
-        origin: "https://quickchat-reboot.onrender.com/"
+        origin: ["https://dipdev.online/","https://quickchat-reboot.onrender.com/"]
     }
 });
 const { MongoClient } = require('mongodb');
