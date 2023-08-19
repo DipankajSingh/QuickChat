@@ -3,20 +3,17 @@ const app = express();
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
-const io = new Server(server);
+const io = new Server(server,{
+    cors:{
+        origin: "https://quickchat-reboot.onrender.com/"
+    }
+});
 const { MongoClient } = require('mongodb');
 const bodyParser = require('body-parser');
 
-app.use(express.static('public'))
-
 app.use(bodyParser.json());
-app.use(require('cors')());
-const rooms = {};
 
-// Serve the index.html file
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/public/index.html');
-});
+const rooms = {};
 
 // Connect to MongoDB
 async function connectToMongoDB() {
@@ -68,6 +65,7 @@ async function pushMessage(message, userName, roomKey, time, db) {
 }
 
 io.on('connection', (socket) => {
+    console.log("1 user is connected")
     function emitOnlineStatus(room, userName) {
         socket.to(room).emit('userOnline', userName);
     }
