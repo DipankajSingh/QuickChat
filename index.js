@@ -9,12 +9,15 @@ const io = new Server(server,{
         origin: ["https://dipdev.online/","https://quickchat-reboot.onrender.com/","http://127.0.0.1:5500"]
     }
 });
+
 const { MongoClient } = require('mongodb');
 const bodyParser = require('body-parser');
 
 app.use(bodyParser.json());
+app.use(cors())
 
-app.get("/wakeupserver",cors(),(req,res)=>{
+
+app.get("/wakeupserver",(req,res)=>{
     res.send({success:true})
 })
 
