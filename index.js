@@ -3,15 +3,20 @@ const app = express();
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
+const cors=require('cors')
 const io = new Server(server,{
     cors:{
-        origin: ["https://dipdev.online/","https://quickchat-reboot.onrender.com/"]
+        origin: ["https://dipdev.online/","https://quickchat-reboot.onrender.com/","http://127.0.0.1:5500"]
     }
 });
 const { MongoClient } = require('mongodb');
 const bodyParser = require('body-parser');
 
 app.use(bodyParser.json());
+
+app.get("/wakeupserver",cors(),(req,res)=>{
+    res.send({success:true})
+})
 
 const rooms = {};
 
@@ -44,7 +49,6 @@ function emitOnlineStatus(room, userName) {
     socket.to(room).emit('userOnline', userName);
 }
 
-
 // Function to push a new chat message
 async function pushMessage(message, userName, roomKey, time, db) {
     try {
@@ -71,8 +75,8 @@ io.on('connection', (socket) => {
     }
     // Join a room
     socket.on('joinRoom', async (room) => {
-        const roomName = room.split(" ")[0];
-        const userName = room.split(" ")[1];
+        const roomName = room.split(" ")[0].toLowerCase();
+        const userName = room.split(" ")[1].toLowerCase();
         if (!rooms.hasOwnProperty(roomName)) {
             rooms[roomName] = [{ socketId: socket.id, userName }]; // Create a new room array if it doesn't exist
         } else {
