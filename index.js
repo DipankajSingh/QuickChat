@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 app.use(cors())
 
 
-app.get("/wakeupserver",(req,res)=>{
+app.get("/",(req,res)=>{
     res.send({success:true})
 })
 
